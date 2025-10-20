@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { companyCreate } from './company'
 import './App.css'
-import { Admin, Resource, type DataProvider } from 'react-admin'
+import { Admin, Resource, type DataProvider, Login } from 'react-admin'
+import { Link } from 'react-router-dom';
 
 const customAuthProvider = {
   async login(params: { username: string; password: string }) {
@@ -40,6 +42,16 @@ const customAuthProvider = {
   }
 }
 
+// カスタムログインページ
+const CustomLoginPage = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '100px' }}>
+    <Login />
+    <Link to="/register" style={{ marginTop: '20px', textDecoration: 'none', color: 'blue' }}>
+      新規作成はこちら
+    </Link>
+  </div>
+);
+
 const customDataProvider: DataProvider = {
     getList: (resource, params) => {
         // Implement your custom logic here
@@ -52,7 +64,8 @@ const customDataProvider: DataProvider = {
 }
 
 const App = () => (
-  <Admin authProvider={customAuthProvider} dataProvider={customDataProvider}>
+  <Admin authProvider={customAuthProvider} dataProvider={customDataProvider} loginPage={CustomLoginPage}>
+    <Resource name="company" create={companyCreate}/>
     <Resource name="products" />
   </Admin>
 );
