@@ -8,10 +8,10 @@ import { Link } from 'react-router-dom';
 import { productsList } from './products'
 
 const customAuthProvider = {
-  async login(params: { account_name: string; password: string }) {
+  async login({username, password}) {
     const request = new Request('api/auth/company/login', {
       method: 'POST',
-      body: JSON.stringify({ account_name: params.account_name, password: params.password }),
+      body: JSON.stringify({account_name : username, password }),
       headers: new Headers({ 'Content-Type': 'application/json' }),
     });
     let response;
@@ -65,7 +65,7 @@ const customDataProvider: DataProvider = {
 }
 
 const App = () => (
-  <Admin authProvider={customAuthProvider} dataProvider={customDataProvider} loginPage={CustomLoginPage}>
+  <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}>
     <Resource name="company" create={companyCreate}/>
     <Resource name="products" list={productsList}/>
   </Admin>
