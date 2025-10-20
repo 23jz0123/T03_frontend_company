@@ -5,12 +5,13 @@ import { companyCreate } from './company'
 import './App.css'
 import { Admin, Resource, type DataProvider, Login } from 'react-admin'
 import { Link } from 'react-router-dom';
+import { productsList } from './products'
 
 const customAuthProvider = {
-  async login(params: { username: string; password: string }) {
+  async login(params: { account_name: string; password: string }) {
     const request = new Request('api/auth/company/login', {
       method: 'POST',
-      body: JSON.stringify({ username: params.username, password: params.password }),
+      body: JSON.stringify({ account_name: params.account_name, password: params.password }),
       headers: new Headers({ 'Content-Type': 'application/json' }),
     });
     let response;
@@ -66,7 +67,7 @@ const customDataProvider: DataProvider = {
 const App = () => (
   <Admin authProvider={customAuthProvider} dataProvider={customDataProvider} loginPage={CustomLoginPage}>
     <Resource name="company" create={companyCreate}/>
-    <Resource name="products" />
+    <Resource name="products" list={productsList}/>
   </Admin>
 );
 
