@@ -24,7 +24,7 @@ export const productsList = () => {
     useEffect(() => {
         if (isIdentityLoading || !identity) return;
 
-        dataProvider.getOne('accounts', { id: identity.id })
+        dataProvider.getOne('companies', { id: identity.id })
             .then(({ data }) => {
                 setRecord(data);
                 setLoading(false);
@@ -35,11 +35,21 @@ export const productsList = () => {
             });
     }, [identity, isIdentityLoading, dataProvider, notify]);
 
+    if (loading || isIdentityLoading) {
+        return <Loading />;
+    }
+
     if (!record) {
         return (
-            <Conatiner component="main">
-
-            </Conatiner>
+            <Container component="main">
+                <Typography variant="h5">情報が見つかりません</Typography>
+            </Container>
         )
     }
+
+    return (
+        <Container component="main">
+            <Typography variant="h2">やまじい</Typography>
+        </Container>
+    )
 }
