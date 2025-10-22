@@ -1,7 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { companyCreate } from './company'
 import './App.css'
 import { Admin, Resource, type DataProvider, Login } from 'react-admin'
 import { Link } from 'react-router-dom';
@@ -30,12 +26,24 @@ const customAuthProvider = {
     const status = error.status;
     if (status === 401 || status === 403) {
       localStorage.removeItem('auth_id');
-      throw new Error('Unauthorized');
+      throw new Error('checkError Unauthorized');
     }
   },
   async checkAuth() {
+    const publicPaths = ['/register', '/accounts']; // 認証をスキップするパス
+    const currentPath = window.location.pathname;
+  
+    console.log('Current Path:', currentPath);
+    console.log('Auth ID:', localStorage.getItem('auth_id'));
+  
+    if (publicPaths.some(path => currentPath.startsWith(path))) {
+      console.log('Skipping auth check for:', currentPath);
+      return Promise.resolve(); // 認証チェックをスキップ
+    }
+  
     if (!localStorage.getItem('auth_id')) {
-      throw new Error('Unauthorized');
+      console.log('Auth check failed');
+      throw new Error('checkAuth Unauthorized');
     }
   },
   async logout() {
@@ -44,7 +52,7 @@ const customAuthProvider = {
   async getIdentity() {
     const id = localStorage.getItem('auth_id');
     if (!id) {
-      throw new Error('Unauthorized');
+      throw new Error('getIdentity Unauthorized');
     }
     return { id: id, fullName: `User ${id}`, avatar: null };
   }
@@ -86,7 +94,6 @@ const customDataProvider: DataProvider = {
 
 const App = () => (
   <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}>
-    <Resource name="company" create={companyCreate}/>
     <Resource name="products" list={productsList}/>
   </Admin>
 );

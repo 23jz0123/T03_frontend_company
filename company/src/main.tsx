@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         {/* メインの管理画面 */}
         <Route path="*" element={<App />} />
         {/* 新規作成ページ */}
-        <Route path="/register" element={<Register />} />
+        <Route path="/register/*" element={<Register />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

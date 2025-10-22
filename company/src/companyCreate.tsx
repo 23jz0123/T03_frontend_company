@@ -1,8 +1,26 @@
-import { Create, SimpleForm, TextInput, NumberInput, ArrayInput, SimpleFormIterator } from "react-admin";
+import { Create, SimpleForm, TextInput, NumberInput, ArrayInput, SimpleFormIterator, useRedirect, useNotify } from "react-admin";
 
-export const companyCreate = () => (
-  <Create redirect="list">
-    <SimpleForm>
+export const companyCreate = () => {
+  const redirect = useRedirect();
+  const notify = useNotify();
+  
+  const handleSubmit = async (data: any) => {
+    try {
+      // データ保存処理をここに記述
+      console.log("Saving data:", data);
+  
+      // 保存成功時の処理
+      notify("アカウントが作成されました", { type: "success" });
+      redirect("/register/company/create"); // companyCreate にリダイレクト
+    } catch (error) {
+      // エラー時の処理
+      notify("アカウントの作成に失敗しました", { type: "error" });
+    }
+  };
+  
+  return (
+    <Create>
+      <SimpleForm onSubmit={handleSubmit}>
       <TextInput source="company_name" label="会社名" />
       <NumberInput source="capital" label="資本金" />
       <NumberInput source="sales" label="売上高" />
@@ -25,4 +43,6 @@ export const companyCreate = () => (
       </ArrayInput>
     </SimpleForm>
   </Create>
-);
+  );
+};
+  
