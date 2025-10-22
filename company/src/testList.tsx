@@ -12,12 +12,8 @@ export const UserList = () => {
           secondaryText={(record) => record.company_name}
         />
       ) : (
-        <Datagrid rowClick=""> 
-          <TextField source="id" />
-          <TextField source="account_name" />
+        <Datagrid rowClick="show"> 
           <TextField source="company_name" />
-          <TextField source="password" />
-          <EditButton label="編集"/> 
         </Datagrid>
       )}
     </List>
