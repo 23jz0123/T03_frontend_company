@@ -1,7 +1,8 @@
 import './App.css'
 import { Admin, Resource, type DataProvider, Login } from 'react-admin'
 import { Link } from 'react-router-dom';
-import { productsList } from './products'
+import { ProductShow } from './products'
+import { Navigate } from 'react-router-dom';
 
 const customAuthProvider = {
   async login({username, password}) {
@@ -74,6 +75,7 @@ const customDataProvider: DataProvider = {
         return Promise.resolve({ data: [], total: 0 })
     },
     getOne: async (resource, params) => {
+        console.log('getOne called with resource:', resource, 'params:', params);
         const url = `/api/${resource}/${params.id}`;
 
         const response = await fetch(url, {
@@ -92,9 +94,11 @@ const customDataProvider: DataProvider = {
     },
 }
 
+const Dashboard = () => <Navigate to="/products/show" replace />;
+
 const App = () => (
-  <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}>
-    <Resource name="products" list={productsList}/>
+  <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage} dashboard={Dashboard}>
+    <Resource name="products" show={ProductShow}/>
   </Admin>
 );
 
