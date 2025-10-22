@@ -24,22 +24,29 @@ const customAuthProvider = {
       throw new Error(response.statusText);
     }
     const auth = await response.json();
-    localStorage.setItem('auth', JSON.stringify(auth));
+    localStorage.setItem('auth_id', auth.id);
   },
   async checkError(error: { status: any }) {
     const status = error.status;
     if (status === 401 || status === 403) {
-      localStorage.removeItem('auth');
+      localStorage.removeItem('auth_id');
       throw new Error('Unauthorized');
     }
   },
   async checkAuth() {
-    if (!localStorage.getItem('auth')) {
+    if (!localStorage.getItem('auth_id')) {
       throw new Error('Unauthorized');
     }
   },
   async logout() {
-    localStorage.removeItem('auth');
+    localStorage.removeItem('auth_id');
+  },
+  async getIdentity() {
+    const id = localStorage.getItem('auth_id');
+    if (!id) {
+      throw new Error('Unauthorized');
+    }
+    return { id: id, fullName: `User ${id}`, avatar: null };
   }
 }
 
@@ -58,9 +65,22 @@ const customDataProvider: DataProvider = {
         // Implement your custom logic here
         return Promise.resolve({ data: [], total: 0 })
     },
-    getOne: (resource, params) => {
-        // Implement your custom logic here
-        return Promise.resolve({ data: {} })
+    getOne: async (resource, params) => {
+        const url = `/api/${resource}/${params.id}`;
+
+        const response = await fetch(url, {
+          headers: new Headers({
+            'Content-Type': 'application/json',
+          }),
+        });
+
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error(response.statusText);
+        }
+
+        const data = await response.json();
+
+        return { data: data };
     },
 }
 
