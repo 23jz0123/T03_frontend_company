@@ -9,6 +9,48 @@ import './App.css'
 import { UserList } from "./testList";
 import { Navigate } from 'react-router-dom';
 
+const registerDataProvider: DataProvider = { 
+  create: async (resource, { data }) => {
+      try {
+        const response = await fetch(`/api/admin/companies/accounts`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+    
+        if (!response.ok) {
+          const errorText = await response.text(); // サーバーからのエラーメッセージを取得
+          console.error("CREATE Error Response:", errorText);
+    
+          throw new Error();
+        }
+    
+        const responseData = await response.json();
+        console.log("CREATE Success Response:", responseData);
+    
+        return { data: responseData };
+      } catch (error) {
+        console.error("CREATE Request Failed:", error);
+        throw error; // エラーを再スローして呼び出し元で処理
+      }
+    },
+}
+const Dashboard = () => <Navigate to="/register/account/create" replace />;
+
+const Register = () => (
+  console.log("Register component rendered"),
+  console.log("Current URL:", window.location.href),
+  <Admin basename="/register" dataProvider={registerDataProvider} dashboard={Dashboard}>
+    <Resource name="account" create={Account}/>
+    <Resource name="company" create={companyCreate}/>
+  </Admin>
+);
+
+export default Register;
+
 // const Register = () => {
 //   const [formData, setFormData] = useState({ account_name: '', password: '' });
 //   const [message, setMessage] = useState('');
@@ -76,45 +118,3 @@ import { Navigate } from 'react-router-dom';
 // };
 
 // export default Register;
-
-const registerDataProvider: DataProvider = { 
-  create: async (resource, { data }) => {
-      try {
-        const response = await fetch(`/api/admin/companies/accounts`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-    
-        if (!response.ok) {
-          const errorText = await response.text(); // サーバーからのエラーメッセージを取得
-          console.error("CREATE Error Response:", errorText);
-    
-          throw new Error();
-        }
-    
-        const responseData = await response.json();
-        console.log("CREATE Success Response:", responseData);
-    
-        return { data: responseData };
-      } catch (error) {
-        console.error("CREATE Request Failed:", error);
-        throw error; // エラーを再スローして呼び出し元で処理
-      }
-    },
-}
-const Dashboard = () => <Navigate to="/register/account/create" replace />;
-
-const Register = () => (
-  console.log("Register component rendered"),
-  console.log("Current URL:", window.location.href),
-  <Admin basename="/register" dataProvider={registerDataProvider} dashboard={Dashboard}>
-    <Resource name="account" create={Account}/>
-    <Resource name="company" create={companyCreate}/>
-  </Admin>
-);
-
-export default Register;

@@ -11,9 +11,48 @@ import {
     Show, SimpleShowLayout, DateField, RichTextField
 } from 'react-admin';
 import { Card, Typography, Container, Box, Grid } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
 
-// export const productsList = () => {
+export const ProductShow = () => {
+    const { identity, isLoading: isIdentityLoading } = useGetIdentity();
+    console.log('id:', identity?.id);
+
+    if (isIdentityLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!identity) {
+        return <div>ログイン情報が見つかりません</div>;
+    }
+    return (
+        <Show resource="companies" id={identity.id}>
+            <SimpleShowLayout>
+                <TextField source="company_name" label="会社名"/>
+                <TextField source="address" label="住所"/>
+                <RichTextField source="business_detail" label="事業内容"/>
+                <TextField source="capital" label="資本金"/>
+                <EmailField source="email" label="メールアドレス"/>
+                <TextField source="employee_count" label="従業員数"/>
+                <TextField source="foundation" label="設立年"/>
+                <TextField source="industry_name" label="業種"/>
+                <RichTextField source="introduction" label="会社紹介文"/>
+                <TextField source="office_location" label="事業所"/>
+                <TextField source="phone_number" label="電話番号"/>
+                <TextField source="postal_code" label="郵便番号"/>
+                <RichTextField source="profile" label="プロフィール"/>
+                <TextField source="representative_name" label="採用担当者"/>
+                <TextField source="sales" label="売上"/>
+                <RichTextField source="service_achievement" label="主な事業実績"/>
+            </SimpleShowLayout>
+        </Show>
+    )
+    // return (
+    //     <Container component="main">
+    //         <Typography variant="h2">やまじい</Typography>
+    //     </Container>
+    // )
+};
+    
+// export const ProductShow = () => {
 //     const [record, setRecord] = useState<any>(null);
 //     const [loading, setLoading] = useState(true);
 
@@ -284,48 +323,5 @@ import PersonIcon from '@mui/icons-material/Person';
 //             </Card>
 //         </Container>
 //     )
+
 // };
-
-export const ProductShow = () => {
-    const [record, setRecord] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-
-    const notify = useNotify();
-    const dataProvider = useDataProvider();
-
-    const { identity, isLoading: isIdentityLoading } = useGetIdentity();
-
-    useEffect(() => {
-        if (isIdentityLoading || !identity) return;
-
-        dataProvider.getOne('companies', { id: identity.id })
-            .then(({ data }) => {
-                setRecord(data);
-                setLoading(false);
-            })
-            .catch(() => {
-                notify('情報の取得に失敗しました', { type: 'error' });
-                setLoading(false);
-            });
-    }, [identity, isIdentityLoading, dataProvider, notify]);
-
-    if (loading || isIdentityLoading) {
-        return <Loading />;
-    }
-
-    if (!record) {
-        return (
-            <Container component="main">
-                <Typography variant="h5">情報が見つかりません</Typography>
-            </Container>
-        )
-    }
-    return (
-        <Show>
-        <SimpleShowLayout>
-            <TextField source="company_name" label="会社名"/>
-        </SimpleShowLayout>
-    </Show>
-    )
-};
-    
