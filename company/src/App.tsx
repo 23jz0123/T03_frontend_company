@@ -1,9 +1,10 @@
 import './App.css'
-import { Admin, Resource, type DataProvider, Login, useGetIdentity } from 'react-admin'
-import { Link } from 'react-router-dom';
+import { Admin, Resource, type DataProvider, Login, useGetIdentity, useLogin, useNotify } from 'react-admin'
+import { Link, useNavigate } from 'react-router-dom';
 import { ProductShow } from './products'
 import { Navigate } from 'react-router-dom';
 import { UserList } from "./testList";
+import { useState } from 'react';
 
 const customAuthProvider = {
   async login({username, password}) {
@@ -61,14 +62,55 @@ const customAuthProvider = {
 }
 
 // カスタムログインページ
-const CustomLoginPage = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '100px' }}>
-    <Login />
-    <Link to="/register" style={{ marginTop: '20px', textDecoration: 'none', color: 'blue' }}>
-      新規作成はこちら
-    </Link>
-  </div>
-);
+// const CustomLoginPage = () => (
+//   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '100px' }}>
+//     <Login />
+//     <Link to="/register" style={{ marginTop: '20px', textDecoration: 'none', color: 'blue' }}>
+//       新規作成はこちら
+//     </Link>
+//   </div>
+// );
+const CustomLoginPage = () => {
+  const login = useLogin();
+  const notify = useNotify();
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await login({ username, password });
+      const id = localStorage.getItem('auth_id');
+      if (id) {
+        navigate(`/products/${id}/show`, { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
+    } catch (error) {
+      notify('ログインに失敗しました', { type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '100px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
+        <label>ユーザー名</label>
+        <input value={username} onChange={e => setUsername(e.target.value)} />
+        <label style={{ marginTop: 8 }}>パスワード</label>
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+        <button type="submit" disabled={loading} style={{ marginTop: 12 }}>{loading ? 'ログイン中...' : 'ログイン'}</button>
+      </form>
+      <Link to="/register" style={{ marginTop: '20px', textDecoration: 'none', color: 'blue' }}>
+        新規作成はこちら
+      </Link>
+    </div>
+  );
+};
 
 const customDataProvider: DataProvider = {
     getList: async (resource, params) => {
@@ -122,21 +164,21 @@ const customDataProvider: DataProvider = {
     },
 }
 
-const Dashboard = () => {
-    console.log("Dashboard redirected to /products/show");
-    const { identity, isLoading: isIdentityLoading } = useGetIdentity();
-    if (isIdentityLoading) {
-      return <div>Loading...</div>; // ローディング中の表示
-  }
+// const Dashboard = () => {
+//     console.log("Dashboard redirected to /products/show");
+//     const { identity, isLoading: isIdentityLoading } = useGetIdentity();
+//     if (isIdentityLoading) {
+//       return <div>Loading...</div>; // ローディング中の表示
+//   }
 
-  if (!identity || !identity.id) {
-      return <div>ログイン情報が見つかりません</div>; // ログイン情報がない場合の表示
-  }
-    return <Navigate to={`/products/${identity.id}/show`} replace />;
-};
+//   if (!identity || !identity.id) {
+//       return <div>ログイン情報が見つかりません</div>; // ログイン情報がない場合の表示
+//   }
+//     return <Navigate to={`/products/${identity.id}/show`} replace />;
+// };
 
 const App = () => (
-  <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage} dashboard={Dashboard}>
+  <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage} /* dashboard={Dashboard} */> 
     <Resource name="products" show={ProductShow}/>
   </Admin>
 );
