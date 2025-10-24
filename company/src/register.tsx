@@ -1,13 +1,13 @@
 // import React, { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 
-import { Admin } from "react-admin";
+import { Admin, CustomRoutes } from "react-admin";
 import { Resource, type DataProvider } from "react-admin";
 import { companyCreate } from './companyCreate'
 import { Account } from './accountCreate'
 import './App.css'
 import { UserList } from "./testList";
-import { Navigate } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 
 const registerDataProvider: DataProvider = { 
   create: async (resource, { data }) => {
@@ -38,14 +38,22 @@ const registerDataProvider: DataProvider = {
       }
     },
 }
-const Dashboard = () => <Navigate to="/register/account/create" replace />;
+//const Dashboard = () => <Navigate to="/register/account/create" replace />;
 
 const Register = () => (
   console.log("Register component rendered"),
   console.log("Current URL:", window.location.href),
-  <Admin basename="/register" dataProvider={registerDataProvider} dashboard={Dashboard}>
+  <Admin
+    basename="/register"
+    dataProvider={registerDataProvider}
+    // Dashboard を渡さず、カスタムルートでルートアクセスを作成ページへリダイレクト
+    
+  >
     <Resource name="account" create={Account}/>
     <Resource name="company" create={companyCreate}/>
+    <CustomRoutes>
+      <Route path="/" element={<Navigate to="/register/account/create" replace />} />
+    </CustomRoutes>
   </Admin>
 );
 

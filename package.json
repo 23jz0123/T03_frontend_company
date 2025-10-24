@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-admin": "^5.12.1"
+  }
+}
