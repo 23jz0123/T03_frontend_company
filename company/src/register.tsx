@@ -10,6 +10,38 @@ import { UserList } from "./testList";
 import { Navigate, Route } from 'react-router-dom';
 
 const registerDataProvider: DataProvider = { 
+  getList: async (resource, params) => {
+    let url = `/api/companies/1`;
+    if (resource === "industries") {
+      url = `/api/list/industories`;
+    }
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    if (!response.ok) {
+      const errorText = await response.text(); // サーバーからのエラーメッセージを取得
+      console.error("GET LIST Error Response:", errorText);
+
+      throw new Error();    
+    }
+    const totalHeader = response.headers.get("X-Total-Count");
+    const data = await response.json();
+    const total = totalHeader ? Number(totalHeader) : (Array.isArray(data) ? data.length : 1);
+    return { data, total };
+  },
+  getMany: async (resource, params) => {
+    const  url = `/api/list/industories`; 
+    const resp = await fetch(url, {
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+    });
+    if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
+    const data = await resp.json();
+    return { data };
+  },
   create: async (resource, { data }) => {
       try {
         const response = await fetch(`/api/admin/companies/accounts`, {
