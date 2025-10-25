@@ -1,4 +1,4 @@
-import { Create, SimpleForm, TextInput, NumberInput, ArrayInput, SimpleFormIterator, useRedirect, useNotify } from "react-admin";
+import { Create, SimpleForm, TextInput, NumberInput, ReferenceInput, AutocompleteArrayInput, useRedirect, useNotify } from "react-admin";
 
 export const companyCreate = () => {
   const redirect = useRedirect();
@@ -36,11 +36,9 @@ export const companyCreate = () => {
       <NumberInput source="foundation" label="設立年" />
       <TextInput source="service_achievement" label="サービス実績" multiline />
       <TextInput source="office_location" label="オフィス所在地" />
-      <ArrayInput source="industry_id" label="業界ID">
-        <SimpleFormIterator>
-          <NumberInput source="id" label="ID" />
-        </SimpleFormIterator>
-      </ArrayInput>
+      <ReferenceInput source="industries" reference="industries" label="業界">
+        <AutocompleteArrayInput optionText="industry_name" />
+      </ReferenceInput>
     </SimpleForm>
   </Create>
   );
