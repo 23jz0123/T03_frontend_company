@@ -164,21 +164,8 @@ const customDataProvider: DataProvider = {
     },
 }
 
-// const Dashboard = () => {
-//     console.log("Dashboard redirected to /products/show");
-//     const { identity, isLoading: isIdentityLoading } = useGetIdentity();
-//     if (isIdentityLoading) {
-//       return <div>Loading...</div>; // ローディング中の表示
-//   }
-
-//   if (!identity || !identity.id) {
-//       return <div>ログイン情報が見つかりません</div>; // ログイン情報がない場合の表示
-//   }
-//     return <Navigate to={`/products/${identity.id}/show`} replace />;
-// };
-
 const App = () => (
-  <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage} /* dashboard={Dashboard} */> 
+  <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}> 
     <Resource name="products" show={ProductShow}/>
   </Admin>
 );
