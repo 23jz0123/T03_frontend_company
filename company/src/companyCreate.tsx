@@ -26,7 +26,7 @@ export const CompanyCreate = () => {
   
         // body には会社情報のみ（account_id は含めない）
         const payload = { ...data, industry_id };
-        delete (payload as any).account_id; // 念のため除去
+        payload.id = accountId;
   
         await dataProvider.create('company', {
           data: payload,
@@ -54,7 +54,7 @@ export const CompanyCreate = () => {
       <TextInput source="business_detail" label="事業内容" multiline />
       <NumberInput source="postal_code" label="郵便番号" />
       <TextInput source="address" label="住所" />
-      <TextInput source="phone_number" label="電話番号" />
+      <NumberInput source="phone_number" label="電話番号" />
       <TextInput source="email" label="メールアドレス" />
       <NumberInput source="foundation" label="設立年" />
       <TextInput source="service_achievement" label="サービス実績" multiline />
