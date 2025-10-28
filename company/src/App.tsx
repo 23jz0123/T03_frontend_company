@@ -5,6 +5,7 @@ import { ProductShow } from './products'
 import { Navigate } from 'react-router-dom';
 import { UserList } from "./testList";
 import { useState } from 'react';
+import { advertisements, AdvertisementShow } from './advertisements';
 
 const customAuthProvider = {
   async login({username, password}) {
@@ -115,14 +116,19 @@ const CustomLoginPage = () => {
 const customDataProvider: DataProvider = {
     getList: async (resource, params) => {
       let url = `/api/companies/1`;
+      const authId = localStorage.getItem('auth_id');
   
       // リソース名に応じてエンドポイントを切り替える
       if (resource === "pendings") {
         url = "/api/admin/advertisements/pendings";
       } else if (resource === "advertisements") {
         const year = params.filter?.year || new Date().getFullYear(); // 年号を取得（デフォルトは現在の年）
-        url = `/api/admin/advertisements?year=${year}`;
+        url = `/api/companies/${authId}/advertisements?year=${year}`;
+      } else if (resource === "products") {
+        url = `/api/companies/${authId}`;
       }
+
+      console.log('Fetching list for ${resource} from URL:', url);
     
       const response = await fetch(url, {
         method: "GET",
@@ -166,7 +172,8 @@ const customDataProvider: DataProvider = {
 
 const App = () => (
   <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}> 
-    <Resource name="products" show={ProductShow}/>
+    <Resource name="products" show={ProductShow} list={ProductShow}/>
+    <Resource name="advertisements" show={AdvertisementShow} list={AdvertisementShow}/>
   </Admin>
 );
 
