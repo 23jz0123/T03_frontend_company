@@ -3,7 +3,7 @@
 
 import { Admin, CustomRoutes } from "react-admin";
 import { Resource, type DataProvider } from "react-admin";
-import { companyCreate } from './companyCreate'
+import { CompanyCreate } from './companyCreate'
 import { Account } from './accountCreate'
 import './App.css'
 import { UserList } from "./testList";
@@ -42,15 +42,29 @@ const registerDataProvider: DataProvider = {
     const data = await resp.json();
     return { data };
   },
-  create: async (resource, { data }) => {
+  create: async (resource, params) => {
       try {
-        const response = await fetch(`/api/admin/companies/accounts`, {
+        let url = '';
+        if (resource === 'account') {
+          url = `/api/admin/companies/accounts`;
+        } else if (resource === 'company') {
+          const companyId =
+          params.meta?.company_id ??
+          params.data?.account_id; // フォールバック（渡っていれば利用）
+        if (!companyId) throw new Error('company_id(account_id) が指定されていません');
+        url = `/api/admin/companies/${companyId}`;
+        }
+        console.log('[DP.create] resource:', resource);
+        console.log('[DP.create] url:', url);
+        console.log('[DP.create] body:', params.data);
+
+        const response = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(params.data),
         });
     
         if (!response.ok) {
@@ -62,7 +76,6 @@ const registerDataProvider: DataProvider = {
     
         const responseData = await response.json();
         console.log("CREATE Success Response:", responseData);
-    
         return { data: responseData };
       } catch (error) {
         console.error("CREATE Request Failed:", error);
@@ -82,7 +95,7 @@ const Register = () => (
     
   >
     <Resource name="account" create={Account}/>
-    <Resource name="company" create={companyCreate}/>
+    <Resource name="company" create={CompanyCreate}/>
     <CustomRoutes>
       <Route path="/" element={<Navigate to="/register/account/create" replace />} />
     </CustomRoutes>
