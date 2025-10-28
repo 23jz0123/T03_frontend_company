@@ -52,7 +52,7 @@ const registerDataProvider: DataProvider = {
           params.meta?.company_id ??
           params.data?.account_id; // フォールバック（渡っていれば利用）
         if (!companyId) throw new Error('company_id(account_id) が指定されていません');
-        url = `/api/admin/companies/${companyId}`;
+        url = `/api/companies/${companyId}`;
         }
         console.log('[DP.create] resource:', resource);
         console.log('[DP.create] url:', url);
