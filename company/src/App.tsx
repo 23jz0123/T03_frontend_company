@@ -5,7 +5,8 @@ import { ProductShow } from './products'
 import { Navigate } from 'react-router-dom';
 import { UserList } from "./testList";
 import { useState } from 'react';
-import { advertisements, AdvertisementShow } from './advertisements';
+import { AdvertisementShow } from './advertisements';
+import { AdvertisementsList } from './advertisementsList';
 
 const customAuthProvider = {
   async login({username, password}) {
@@ -123,7 +124,7 @@ const customDataProvider: DataProvider = {
         url = "/api/admin/advertisements/pendings";
       } else if (resource === "advertisements") {
         const year = params.filter?.year || new Date().getFullYear(); // 年号を取得（デフォルトは現在の年）
-        url = `/api/companies/${authId}/advertisements?year=${year}`;
+        url = `/api/companies/${authId}/advertisements`;
       } else if (resource === "products") {
         url = `/api/companies/${authId}`;
       }
@@ -152,7 +153,17 @@ const customDataProvider: DataProvider = {
     },
     getOne: async (resource, params) => {
         console.log('getOne called with resource:', resource, 'params:', params);
-        const url = `/api/${resource}/${params.id}`;
+        let url;
+
+        if (resource === "advertisements") {
+          const { id } = params;
+          if (!id) {
+            throw new Error("ID is required for getOne operation");
+          }
+          url = `/api/companies/${localStorage.getItem('auth_id')}/advertisements/${id}`;
+        } else {
+          url = `/api/${resource}/${params.id}`;
+        }
 
         const response = await fetch(url, {
           headers: new Headers({
@@ -173,7 +184,7 @@ const customDataProvider: DataProvider = {
 const App = () => (
   <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}> 
     <Resource name="products" show={ProductShow} list={ProductShow}/>
-    <Resource name="advertisements" show={AdvertisementShow} list={AdvertisementShow}/>
+    <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} />
   </Admin>
 );
 
