@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
-import { Show, SimpleShowLayout, TextField, NumberField, BooleanField, ArrayField, ChipField, FunctionField, DateField, UrlField, SingleFieldList } from "react-admin";
-import Stack from "@mui/material/Stack";
+import { Show, SimpleShowLayout, TextField, NumberField, BooleanField, ArrayField, FunctionField, DateField, UrlField, SingleFieldList } from "react-admin";
 import Chip from "@mui/material/Chip";
 
 
