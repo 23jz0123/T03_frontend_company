@@ -7,6 +7,7 @@ import { UserList } from "./testList";
 import { useState } from 'react';
 import { AdvertisementShow } from './advertisements';
 import { AdvertisementsList } from './advertisementsList';
+import { RequirementShow } from './requirement';
 
 const customAuthProvider = {
   async login({username, password}) {
@@ -120,9 +121,7 @@ const customDataProvider: DataProvider = {
       const authId = localStorage.getItem('auth_id');
   
       // リソース名に応じてエンドポイントを切り替える
-      if (resource === "pendings") {
-        url = "/api/admin/advertisements/pendings";
-      } else if (resource === "advertisements") {
+      if (resource === "advertisements") {
         const year = params.filter?.year || new Date().getFullYear(); // 年号を取得（デフォルトは現在の年）
         url = `/api/companies/${authId}/advertisements`;
       } else if (resource === "products") {
@@ -185,6 +184,7 @@ const App = () => (
   <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}> 
     <Resource name="products" show={ProductShow} list={ProductShow}/>
     <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} />
+    <Resource name="requirements" show={RequirementShow} />
   </Admin>
 );
 

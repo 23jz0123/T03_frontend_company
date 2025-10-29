@@ -7,8 +7,9 @@ export const AdvertisementsList = () => {
         <List>
             <Datagrid>
                 <TextField source="id" label="ID" />
-                <TextField source="updated_at" label="更新日" />
+                <TextField source="updated_at" label="更新日時" />
                 <TextField source="year" label="年度" />
+                <TextField source="pending" label="公開状態" />
             </Datagrid>
         </List>
     )
