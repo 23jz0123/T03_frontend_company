@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { Show, SimpleShowLayout, TextField, NumberField, BooleanField, ArrayField, ChipField, DateField, UrlField } from "react-admin";
+import { Show, SimpleShowLayout, TextField, NumberField, BooleanField, ArrayField, ChipField, FunctionField, DateField, UrlField, SingleFieldList } from "react-admin";
+import Stack from "@mui/material/Stack";
+import Chip from "@mui/material/Chip";
 
 
 export const AdvertisementShow = () => {
@@ -21,9 +23,25 @@ export const AdvertisementShow = () => {
             <NumberField source="recruiting_count" label="募集人数" />
             <NumberField source="recruitment" label="採用数" />
             <ArrayField source="tags" label="タグ">
-                <SimpleShowLayout>
+                {/* <SimpleShowLayout>
+                    <ChipField source="tags" />
+                </SimpleShowLayout> */}
+                <SingleFieldList linkType={false}>
                     <ChipField source="" />
-                </SimpleShowLayout>
+                </SingleFieldList>
+            {/* <FunctionField
+                render={(record: any) =>
+                        Array.isArray(record?.tags) && record.tags.length ? (
+                        <Stack direction="row" flexWrap="wrap" gap={1}>
+                        {record.tags.map((t: string, i: number) => (
+                            <Chip key={i} size="small" label={t} sx={{ bgcolor: "grey.700", color: "grey.100" }} />
+                        ))}
+                    </Stack>
+                    ) : (
+                    "未登録"
+                )
+            }
+            /> */}
             </ArrayField>
             <DateField source="created_at" label="作成日" />
             <DateField source="updated_at" label="更新日" />
