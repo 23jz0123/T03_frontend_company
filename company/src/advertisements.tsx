@@ -1,4 +1,5 @@
-import { Show, SimpleShowLayout, TextField, NumberField, BooleanField, ArrayField, FunctionField, DateField, UrlField, SingleFieldList } from "react-admin";
+import { Show, SimpleShowLayout, TextField, NumberField, BooleanField, ArrayField, FunctionField, DateField, UrlField,
+        SingleFieldList, ReferenceManyField, Datagrid } from "react-admin";
 import Chip from "@mui/material/Chip";
 
 
@@ -27,6 +28,47 @@ export const AdvertisementShow = () => {
                 <DateField source="created_at" label="作成日" />
                 <DateField source="updated_at" label="更新日" />
                 <NumberField source="year" label="年" />
+                <ReferenceManyField
+                    label="募集要項"
+                    reference="requirements"
+                    target="advertisement_id"
+                >
+                    <Datagrid bulkActionButtons={false}>
+                        <TextField source="id" label="ID" />
+                        <TextField source="employment_status" label="雇用形態" />
+                        <TextField source="job_categories_name" label="職種" />
+
+                {/* <ArrayField source="location" label="勤務地">
+                    <SingleFieldList>
+                    <ChipField source="" />
+                    </SingleFieldList>
+                </ArrayField>     こいつはなぜかできねえ    */}
+                        <FunctionField
+                            label="勤務地"
+                            render={(r: any) =>
+                            Array.isArray(r?.location) && r.location.length
+                                ? r.location.join("、")
+                                : "未登録"
+                            }
+                        />
+
+                        <ArrayField source="starting_salaries" label="初任給">
+                            <Datagrid bulkActionButtons={false}>
+                                <TextField source="target" label="対象" />
+                                <NumberField
+                                    source="monthly_salary"
+                                    label="月給"
+                                    options={{ style: "currency", currency: "JPY" }}
+                                />
+                            </Datagrid>
+                        </ArrayField>
+
+                        <DateField source="updated_at" label="更新日" />
+                    </Datagrid>
+                </ReferenceManyField>
+                {/* <ReferenceManyField label="募集要項" reference="requirements" target="advertisement_id">
+                    <RequirementColumns />
+                </ReferenceManyField> */}
             </SimpleShowLayout>
         </Show>
     );
