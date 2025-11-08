@@ -6,8 +6,11 @@ import { Navigate } from 'react-router-dom';
 import { UserList } from "./testList";
 import { useState } from 'react';
 import { AdvertisementShow } from './advertisements';
-import { AdvertisementsList } from './advertisementsList';
+import { AdvertisementsList } from './AdvertisementsList';
 import { RequirementShow } from './requirement';
+import { AdvertisementCreate } from './advertisementCreate';
+
+const logDP = (...args: any[]) => console.debug("[DP]", ...args);
 
 const customAuthProvider = {
   async login({username, password}) {
@@ -142,6 +145,13 @@ const customDataProvider: DataProvider = {
     
       const total = response.headers.get("X-Total-Count");
       const data = await response.json();
+
+      if (resource === "advertisements" && Array.isArray(data) && companyId) {
+        data.forEach((adv: any) => {
+          sessionStorage.setItem(`advCompany:${adv.id}`, String(companyId));
+          logDP('Saved advCompany', { id: adv.id, companyId})
+        });
+      }
     
       return {
         data: Array.isArray(data)
@@ -151,15 +161,35 @@ const customDataProvider: DataProvider = {
       };
     },
     getOne: async (resource, params) => {
-        console.log('getOne called with resource:', resource, 'params:', params);
+        logDP('getOne called with resource:', resource, 'params:', params);
         let url;
+        const authId = localStorage.getItem('auth_id');
 
         if (resource === "advertisements") {
           const { id } = params;
           if (!id) {
             throw new Error("ID is required for getOne operation");
           }
-          url = `/api/companies/${localStorage.getItem('auth_id')}/advertisements/${id}`;
+          url = `/api/companies/${authId}/advertisements/${id}`;
+        } else if (resource === "requirements") {
+          const { id } = params as any;
+          if (!id) throw new Error("id is required");
+
+          const advId = sessionStorage.getItem(`reqAdv:${id}`);
+          let companyId =
+          sessionStorage.getItem(`reqCompany:${id}`) ||
+          (advId ? sessionStorage.getItem(`advCompany:${advId}`) : null);
+          if (!companyId) {
+            companyId = authId;
+          }
+
+          logDP("getOne requirements", { id, advId, companyId });
+
+          if (!advId || !companyId) {
+            throw new Error("参照情報が不足しています。求人票から募集要項を開いてください。");
+          }
+
+          url = `/api/companies/${companyId}/advertisements/${advId}/requirements/${id}`;
         } else {
           url = `/api/${resource}/${params.id}`;
         }
@@ -176,14 +206,98 @@ const customDataProvider: DataProvider = {
 
         const data = await response.json();
 
-        return { data: data };
+        return { data: { ...data, _full: true } };
     },
+
+getManyReference: async (resource, params) => {
+  if (resource === "requirements") {
+    const advertisementId =
+      (params as any).id ?? (params as any).targetId ?? (params as any).filter?.advertisement_id;
+
+    logDP("getManyReference requirements params", params, { advertisementId });
+
+    if (!advertisementId) throw new Error("advertisement_id が指定されていません");
+
+    const companyId = localStorage.getItem('auth_id');
+    logDP("sessionStorage advCompany", { [`advCompany:${advertisementId}`]: companyId });
+
+    if (!companyId) throw new Error("company_id が不明です。広告一覧からレコードを開いてください。");
+
+    const url = `/api/companies/${companyId}/advertisements/${advertisementId}/requirements`;
+    logDP("GET", url);
+
+    const response = await fetch(url, { headers: { Accept: "application/json" } });
+    logDP("resp", response.status, response.statusText);
+
+    if (!response.ok) throw new Error(`Failed to fetch requirements: ${response.statusText}`);
+    const data = await response.json();
+    logDP("data len", Array.isArray(data) ? data.length : 0);
+
+    if (Array.isArray(data)) {
+      data.forEach((req: any) => {
+        if (req?.id != null) {
+          sessionStorage.setItem(`reqAdv:${req.id}`, String(advertisementId));
+          sessionStorage.setItem(`reqCompany:${req.id}`, String(companyId));
+        }
+      });
+    }
+
+    return { data, total: Array.isArray(data) ? data.length : 0 };
+  }
+  return customDataProvider.getManyReference(resource, params);
+},
+
+  create: async (resource, params) => {
+    let url;
+    let dataToSubmit;
+
+    if (resource === "advertisements") {
+      const authId = localStorage.getItem('auth_id');
+      if (!authId) throw new Error("Unauthorized: No auth_id found");
+
+      url = `/api/companies/${authId}/advertisements`;
+
+      dataToSubmit = {
+        ...params.data,
+        //デフォルト値(company_id, pending, updated_at, created_at)の設定
+        company_id: Number(authId),
+        pending: params.data.pending !== undefined ? Boolean(params.data.pending) : false,
+        tag_ids: Array.isArray(params.data.tag_ids) ? params.data.tag_ids.map(Number) : [],
+        updated_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+      };
+    } else {
+      throw new Error(`リソース ${resource} の作成はサポートされていません。`);
+    }
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(dataToSubmit),
+      });
+
+      if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`CREATE Error (${resource}):`, errorText);
+            throw new Error(`作成に失敗しました: ${response.status} ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      return { data: { ...responseData, id: responseData.id } };
+    } catch (error) {
+      console.error("Create Request error:", error);
+      throw error;
+    }
+  }
 }
 
 const App = () => (
   <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}> 
     <Resource name="products" show={ProductShow} list={ProductShow}/>
-    <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} />
+    <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} create={AdvertisementCreate} />
     <Resource name="requirements" show={RequirementShow} />
   </Admin>
 );
