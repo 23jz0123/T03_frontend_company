@@ -1,14 +1,14 @@
 import './App.css'
 import { Admin, Resource, type DataProvider, Login, useGetIdentity, useLogin, useNotify } from 'react-admin'
 import { Link, useNavigate } from 'react-router-dom';
-import { ProductShow } from './products'
-import { Navigate } from 'react-router-dom';
-import { UserList } from "./testList";
+import { ProductShow } from './products';
 import { useState } from 'react';
 import { AdvertisementShow } from './advertisements';
 import { AdvertisementsList } from './AdvertisementsList';
 import { RequirementShow } from './requirement';
 import { AdvertisementCreate } from './advertisementCreate';
+import { RequirementCreate } from './RequirementCreate';
+import { AdvertisementEdit } from './AdvertisementEdit';
 
 const logDP = (...args: any[]) => console.debug("[DP]", ...args);
 
@@ -253,11 +253,10 @@ getManyReference: async (resource, params) => {
   create: async (resource, params) => {
     let url;
     let dataToSubmit;
+    const authId = localStorage.getItem('auth_id');
+    if (!authId) throw new Error("Unauthorized: No auth_id found");
 
     if (resource === "advertisements") {
-      const authId = localStorage.getItem('auth_id');
-      if (!authId) throw new Error("Unauthorized: No auth_id found");
-
       url = `/api/companies/${authId}/advertisements`;
 
       dataToSubmit = {
@@ -269,6 +268,17 @@ getManyReference: async (resource, params) => {
         updated_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
       };
+    } else if (resource === "requirements") {
+      const advId = params.data.advertisement_id;
+      if (!advId) throw new Error("advertisement_idが見つかりません");
+
+      url = `/api/companies/${authId}/advertisements/${advId}/requirements`;
+
+      dataToSubmit = {
+        advertisement_id: advId,
+        updated_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+      }
     } else {
       throw new Error(`リソース ${resource} の作成はサポートされていません。`);
     }
@@ -294,14 +304,68 @@ getManyReference: async (resource, params) => {
       console.error("Create Request error:", error);
       throw error;
     }
-  }
+  },
+
+  update: async (resource, params) => { // updateしたときのレスポンスにidがないのでエラーが出る
+    let url;
+    let dataToSubmit;
+    const authId = localStorage.getItem('auth_id');
+    if (!authId) throw new Error("Unauthorized: No auth_id found");
+
+    const { id } = params;
+    if (!id) throw new Error("ID is required for update operation");
+
+    if (resource === "advertisements") {
+      url = `/api/companies/${authId}/advertisements/${id}`;
+
+      dataToSubmit = {
+        ...params.data,
+        tag_ids: Array.isArray(params.data.tag_ids) ? params.data.tag_ids.map(Number) : (params.data.tag_ids || []),
+        updated_at: new Date().toISOString(),
+      };
+      delete dataToSubmit.company_id;
+      delete dataToSubmit.created_at;
+    } else {
+      throw new Error(`リソース ${resource} の更新はサポートされていません。`);
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(dataToSubmit),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`UPDATE Error (${resource}):`, errorText);
+        throw new Error(`更新に失敗しました: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Update Request error:", error);
+      throw error;
+    }
+  },
+
+  delete: async (resource, params) => {
+    const authId = localStorage.getItem('auth_id');
+    if (!authId) throw new Error("Unauthorized: No auth_id found");
+
+    if (resource === "advertisements") {
+      const { id } = params;
+      const url = `/api/companies/${authId}/advertisements/${id}`;
+    }
+  },
 }
 
 const App = () => (
   <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}> 
     <Resource name="products" show={ProductShow} list={ProductShow}/>
-    <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} create={AdvertisementCreate} />
-    <Resource name="requirements" show={RequirementShow} />
+    <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} create={AdvertisementCreate} edit={AdvertisementEdit} />
+    <Resource name="requirements" show={RequirementShow} create={RequirementCreate} />
     <Resource name="tags" />
   </Admin>
 );
