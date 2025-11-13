@@ -19,6 +19,9 @@ export const AdvertisementCreate = () => (
         <TextInput source="rikunavi_url" label="リクナビURL" />
         <TextInput source="job_recruiter_name" label="採用担当者名" validate={validateRequired} />
         <TextInput source="briefing_info" label="説明会資料URL" />
+        <ReferenceArrayInput source="tag_ids" reference="tags" label="タグ">
+            <AutocompleteArrayInput optionText="tag_name" />
+        </ReferenceArrayInput>
         </SimpleForm>
     </Create>
 );

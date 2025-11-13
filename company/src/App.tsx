@@ -122,6 +122,7 @@ const customDataProvider: DataProvider = {
     getList: async (resource, params) => {
       let url = `/api/companies/1`;
       const authId = localStorage.getItem('auth_id');
+      const companyId = authId;
   
       // リソース名に応じてエンドポイントを切り替える
       if (resource === "advertisements") {
@@ -129,6 +130,8 @@ const customDataProvider: DataProvider = {
         url = `/api/companies/${authId}/advertisements`;
       } else if (resource === "products") {
         url = `/api/companies/${authId}`;
+      } else if (resource === "tags") {
+        url = `/api/list/tags`;
       }
 
       console.log('Fetching list for ${resource} from URL:', url);
@@ -299,6 +302,7 @@ const App = () => (
     <Resource name="products" show={ProductShow} list={ProductShow}/>
     <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} create={AdvertisementCreate} />
     <Resource name="requirements" show={RequirementShow} />
+    <Resource name="tags" />
   </Admin>
 );
 
