@@ -1,6 +1,18 @@
 import { Show, SimpleShowLayout, TextField, NumberField, BooleanField, ArrayField, FunctionField, DateField, UrlField,
-        SingleFieldList, ReferenceManyField, Datagrid, useRecordContext, useRedirect } from "react-admin";
-import { Chip, Button } from "@mui/material";
+        SingleFieldList, ReferenceManyField, Datagrid, useRecordContext, useRedirect,
+        TopToolbar,
+        CreateButton,
+        EditButton,
+        DeleteButton
+      } from "react-admin";
+import { Chip, Button, Box, Typography } from "@mui/material";
+
+const AdvertisementShowActions = () => (
+  <TopToolbar>
+    <EditButton label="編集"/>
+    <DeleteButton label="削除" />
+  </TopToolbar>
+);
 
 const RequirementDetailButton: React.FC<{ companyId?: string | number; advertisementId?: string | number }> = ({ companyId, advertisementId }) => {
   const row = useRecordContext<any>();
@@ -23,6 +35,29 @@ const RequirementDetailButton: React.FC<{ companyId?: string | number; advertise
   );
 };
 
+const RequirementListActions = () => {
+  const record = useRecordContext();
+  if (!record) return null;
+
+  return (
+    <TopToolbar>
+      <CreateButton
+        resource="requirements"
+        label="募集要項を新規作成"
+        state={{ record: { advertisement_id: record.id } }}
+      />
+    </TopToolbar>
+  )
+};
+
+const EmptyRequirement = () => (
+  <Box sx={{ textAlign: 'center', width: '100%'}}>
+    <Typography variant="h6" color="textSecondary">
+      募集要項はまだ登録されていません
+    </Typography>
+  </Box>
+);
+
 // 親（求人票）レコードから company_id, id を取得して列を組み立て
 const RequirementColumns = () => {
 const parent = useRecordContext<any>(); // 求人票レコード
@@ -30,7 +65,7 @@ const companyId = parent?.company_id;
 const advertisementId = parent?.id;
 
 return (
-<Datagrid bulkActionButtons={false}>
+<Datagrid bulkActionButtons={false} empty={<EmptyRequirement />}>
 <TextField source="id" label="ID" />
 <TextField source="employment_status" label="雇用形態" />
 <TextField source="job_categories_name" label="職種" />
@@ -43,7 +78,7 @@ return (
 />
 
 <ArrayField source="starting_salaries" label="初任給">
-  <Datagrid bulkActionButtons={false}>
+  <Datagrid bulkActionButtons={false} empty={<EmptyRequirement />}>
     <TextField source="target" label="対象" />
     <NumberField source="monthly_salary" label="月給" options={{ style: "currency", currency: "JPY" }} />
   </Datagrid>
@@ -62,7 +97,7 @@ return (
 
 export const AdvertisementShow = () => {
     return (
-        <Show>
+        <Show actions={<AdvertisementShowActions />}>
             <SimpleShowLayout>
                 <TextField source="id" label="ID" />
                 <TextField source="company_name" label="会社名" />
@@ -87,39 +122,7 @@ export const AdvertisementShow = () => {
                 <DateField source="created_at" label="作成日" />
                 <DateField source="updated_at" label="更新日" />
                 <NumberField source="year" label="年" />
-                {/* <ReferenceManyField
-                    label="募集要項"
-                    reference="requirements"
-                    target="advertisement_id"
-                >
-                    <Datagrid bulkActionButtons={false}>
-                        <TextField source="id" label="ID" />
-                        <TextField source="employment_status" label="雇用形態" />
-                        <TextField source="job_categories_name" label="職種" />
-
-                        <FunctionField
-                            label="勤務地"
-                            render={(r: any) =>
-                            Array.isArray(r?.location) && r.location.length
-                                ? r.location.join("、")
-                                : "未登録"
-                            }
-                        />
-
-                        <ArrayField source="starting_salaries" label="初任給">
-                            <Datagrid bulkActionButtons={false}>
-                                <TextField source="target" label="対象" />
-                                <NumberField
-                                    source="monthly_salary"
-                                    label="月給"
-                                    options={{ style: "currency", currency: "JPY" }}
-                                />
-                            </Datagrid>
-                        </ArrayField>
-
-                        <DateField source="updated_at" label="更新日" />
-                    </Datagrid>
-                </ReferenceManyField> */}
+                <RequirementListActions />
                 <ReferenceManyField label="募集要項" reference="requirements" target="advertisement_id">
                     <RequirementColumns />
                 </ReferenceManyField>
