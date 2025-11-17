@@ -6,9 +6,10 @@ import { useState } from 'react';
 import { AdvertisementShow } from './advertisements';
 import { AdvertisementsList } from './AdvertisementsList';
 import { RequirementShow } from './requirement';
-import { AdvertisementCreate } from './advertisementCreate';
+import { AdvertisementCreate } from './AdvertisementCreate';
 import { RequirementCreate } from './RequirementCreate';
 import { AdvertisementEdit } from './AdvertisementEdit';
+import { ProductEdit } from './productEdit';
 
 const logDP = (...args: any[]) => console.debug("[DP]", ...args);
 
@@ -193,6 +194,8 @@ const customDataProvider: DataProvider = {
           }
 
           url = `/api/companies/${companyId}/advertisements/${advId}/requirements/${id}`;
+        } else if (resource === "products") {
+          url = `/api/companies/${authId}`;
         } else {
           url = `/api/${resource}/${params.id}`;
         }
@@ -247,7 +250,7 @@ getManyReference: async (resource, params) => {
 
     return { data, total: Array.isArray(data) ? data.length : 0 };
   }
-  return customDataProvider.getManyReference(resource, params);
+  throw new Error(`リソース ${resource} の getManyReference はサポートされていません。`);
 },
 
   create: async (resource, params) => {
@@ -312,15 +315,20 @@ getManyReference: async (resource, params) => {
     const authId = localStorage.getItem('auth_id');
     if (!authId) throw new Error("Unauthorized: No auth_id found");
 
-    const { id } = params;
+    const { id, data } = params;
     if (!id) throw new Error("ID is required for update operation");
 
-    if (resource === "advertisements") {
-      url = `/api/companies/${authId}/advertisements/${id}`;
-
+    if (resource === "products") {
+      url = `/api/companies/${authId}`;
       dataToSubmit = {
-        ...params.data,
-        tag_ids: Array.isArray(params.data.tag_ids) ? params.data.tag_ids.map(Number) : (params.data.tag_ids || []),
+        ...data,
+        updated_at: new Date().toISOString(),
+      };
+    } else if (resource === "advertisements") {
+      url = `/api/companies/${authId}/advertisements/${id}`;
+      dataToSubmit = {
+        ...data,
+        tag_ids: Array.isArray(data.tag_ids) ? data.tag_ids.map(Number) : (data.tag_ids || []),
         updated_at: new Date().toISOString(),
       };
       delete dataToSubmit.company_id;
@@ -344,6 +352,15 @@ getManyReference: async (resource, params) => {
         console.error(`UPDATE Error (${resource}):`, errorText);
         throw new Error(`更新に失敗しました: ${response.status} ${response.statusText}`);
       }
+
+      const responseText = await response.text();
+      if (!responseText) {
+        logDP("Update response body for ${resource} is empty, returning params.id");
+        return { data: { id: params.id } };
+      }
+
+      const responseData = JSON.parse(responseText);
+      return { data: { ...responseData, id: responseData.id || params.id } };
     } catch (error) {
       console.error("Update Request error:", error);
       throw error;
@@ -357,14 +374,35 @@ getManyReference: async (resource, params) => {
     if (resource === "advertisements") {
       const { id } = params;
       const url = `/api/companies/${authId}/advertisements/${id}`;
+
+      try {
+        const response = await fetch(url, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`DELETE Error (${resource}):`, errorText);
+          throw new Error(`削除に失敗しました: ${response.status} ${response.statusText}`);
+        }
+        return { data: { id: params.id } };
+      } catch (error) {
+        console.error("Delete Request error:", error);
+        throw error;
+      }
     }
+    throw new Error(`リソース ${resource} の削除はサポートされていません。`);
   },
 }
 
 const App = () => (
   <Admin dataProvider={customDataProvider} authProvider={customAuthProvider} loginPage={CustomLoginPage}> 
-    <Resource name="products" show={ProductShow} list={ProductShow}/>
-    <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} create={AdvertisementCreate} edit={AdvertisementEdit} />
+    <Resource name="products" show={ProductShow} list={ProductShow} edit={ProductEdit} options={{label: '会社情報'}} />
+    <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} create={AdvertisementCreate} edit={AdvertisementEdit} options={{label: '求人票一覧'}} />
     <Resource name="requirements" show={RequirementShow} create={RequirementCreate} />
     <Resource name="tags" />
   </Admin>
