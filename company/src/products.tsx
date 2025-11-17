@@ -6,8 +6,16 @@ import {
     EmailField,
     Show,
     SimpleShowLayout, 
-    RichTextField
+    RichTextField,
+    TopToolbar,
+    EditButton
 } from 'react-admin';
+
+const ProductShowActions = () => (
+    <TopToolbar>
+        <EditButton label="編集"/>
+    </TopToolbar>
+);
 
 export const ProductShow = () => {
     const { identity, isLoading: isIdentityLoading } = useGetIdentity();
@@ -21,7 +29,7 @@ export const ProductShow = () => {
         return <div>ログイン情報が見つかりません</div>;
     }
     return (
-        <Show resource="companies" id={identity.id}>
+        <Show resource="products" id={identity.id} actions={<ProductShowActions />}>
             <SimpleShowLayout>
                 <TextField source="company_name" label="会社名"/>
                 <TextField source="address" label="住所"/>
