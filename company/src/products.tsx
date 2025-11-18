@@ -8,8 +8,12 @@ import {
     SimpleShowLayout, 
     RichTextField,
     TopToolbar,
-    EditButton
+    EditButton,
+    ArrayField,
+    SingleFieldList,
+    FunctionField
 } from 'react-admin';
+import { Chip, Button, Box, Typography } from "@mui/material";
 
 const ProductShowActions = () => (
     <TopToolbar>
@@ -38,7 +42,11 @@ export const ProductShow = () => {
                 <EmailField source="email" label="メールアドレス"/>
                 <TextField source="employee_count" label="従業員数"/>
                 <TextField source="foundation" label="設立年"/>
-                <TextField source="industry_name" label="業種"/>
+                <ArrayField source="industry_names" label="業種">
+                    <SingleFieldList linkType={false}>
+                        <FunctionField render={(industry_name: any) => <Chip label={String(industry_name)} size="small" />} />
+                    </SingleFieldList>
+                </ArrayField>
                 <RichTextField source="introduction" label="会社紹介文"/>
                 <TextField source="office_location" label="事業所"/>
                 <TextField source="phone_number" label="電話番号"/>
