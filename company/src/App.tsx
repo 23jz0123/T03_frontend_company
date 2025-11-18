@@ -1,4 +1,5 @@
 import './App.css'
+import './login.css'
 import { Admin, Resource, type DataProvider, Login, useGetIdentity, useLogin, useNotify } from 'react-admin'
 import { Link, useNavigate } from 'react-router-dom';
 import { ProductShow } from './products';
@@ -89,6 +90,7 @@ const CustomLoginPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log('Attempting login with', { username, password });
       await login({ username, password });
       const id = localStorage.getItem('auth_id');
       if (id) {
@@ -104,19 +106,59 @@ const CustomLoginPage = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '100px' }}>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
-        <label>ユーザー名</label>
-        <input value={username} onChange={e => setUsername(e.target.value)} />
-        <label style={{ marginTop: 8 }}>パスワード</label>
-        <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
-        <button type="submit" disabled={loading} style={{ marginTop: 12 }}>{loading ? 'ログイン中...' : 'ログイン'}</button>
-      </form>
-      <Link to="/register" style={{ marginTop: '20px', textDecoration: 'none', color: 'blue' }}>
-        新規作成はこちら
-      </Link>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-card">
+          <img src="/path/to/logo.png" alt="Logo" className="login-logo" />
+  
+          <h1 className="login-title">Bloom Career</h1>
+          <p className="login-subtitle">アカウントにサインインしてください。</p>
+  
+          {/* ログインエラーをフォーム内で表示したい場合 */}
+          {/* errorMessage を使うならここに <div className="login-error">...</div> */}
+  
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="login-input-group">
+              <i className="bx bxs-user login-input-icon" />
+              <input
+                className="login-input"
+                placeholder="ユーザー名"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+              />
+            </div>
+  
+            <div className="login-input-group">
+              <i className="bx bxs-lock-alt login-input-icon" />
+              <input
+                className="login-input"
+                placeholder="パスワード"
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+            </div>
+  
+            <button
+              className="login-button"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'ログイン中…' : 'ログイン'}
+            </button>
+          </form>
+  
+          <p className="login-register-text">
+            アカウントをお持ちでない方は{' '}
+            <Link to="/register" className="register-link">
+              新規作成はこちら
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
+  
 };
 
 const customDataProvider: DataProvider = {
