@@ -76,13 +76,7 @@ return (
     Array.isArray(r?.location) && r.location.length ? r.location.join("、") : "未登録"
   }
 />
-
-<ArrayField source="starting_salaries" label="初任給">
-  <Datagrid bulkActionButtons={false} empty={<EmptyRequirement />}>
-    <TextField source="target" label="対象" />
-    <NumberField source="monthly_salary" label="月給" options={{ style: "currency", currency: "JPY" }} />
-  </Datagrid>
-</ArrayField>
+<NumberField source="starting_salary_second" label="月給(2年卒)" options={{ style: "currency", currency: "JPY" }} />
 
 <DateField source="updated_at" label="更新日" />
 
