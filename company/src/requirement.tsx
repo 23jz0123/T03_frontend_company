@@ -1,4 +1,4 @@
-import { Show, TabbedShowLayout, TextField, DateField, NumberField, FunctionField, useShowContext, useRefresh, SingleFieldList, Datagrid, ArrayField  } from "react-admin";
+import { Show, TabbedShowLayout, TextField, DateField, NumberField, FunctionField, useShowContext, useRefresh, SingleFieldList, Datagrid, ArrayField, useRecordContext, RecordContextProvider  } from "react-admin";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect } from "react";
@@ -30,6 +30,36 @@ const FullRecordGate: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <>{children}</>;
 };
 
+const SalaryDatagridSection: React.FC = () => {
+    const record = useRecordContext<any>();
+    if (!record) return null;
+
+    const rows = [
+        { label: "月給(1年卒)", value: record.starting_salary_first },
+        { label: "月給(2年卒)", value: record.starting_salary_second },
+        { label: "月給(3年卒)", value: record.starting_salary_third },
+        { label: "月給(4年卒)", value: record.starting_salary_fourth },
+    ];
+
+    // ArrayField に渡すため、一時的に record に salary_rows を載せる
+    return (
+        <RecordContextProvider value={{ ...record, salary_rows: rows }}>
+            <ArrayField source="salary_rows" label="月給">
+                <Datagrid bulkActionButtons={false}>
+                    <TextField source="label" label="区分" />
+                    <NumberField
+                        source="value"
+                        label="金額"
+                        options={{ style: "currency", currency: "JPY" }}
+                        emptyText="未登録"
+                        textAlign="right"
+                    />
+                </Datagrid>
+            </ArrayField>
+        </RecordContextProvider>
+    );
+};
+
 export const RequirementShow = () => {
     const refresh = useRefresh();
 
@@ -57,7 +87,6 @@ export const RequirementShow = () => {
         <FullRecordGate>
         <TabbedShowLayout>
         <TabbedShowLayout.Tab label="概要">
-            <TextField source="id" label="ID" emptyText="未登録" />
             <TextField source="employment_status" label="雇用形態" emptyText="未登録" />
             <TextField source="job_categories_name" label="職種" emptyText="未登録" />
             <FunctionField
@@ -66,10 +95,10 @@ export const RequirementShow = () => {
                     Array.isArray(r?.prefectures) && r.prefectures.length ? r.prefectures.join("、") : "未登録"
                 }
             />
-            <NumberField source="recruiting_count" label="募集人数" emptyText="未登録" />
+            <FunctionField source="recruiting_count" label="募集人数" emptyText="未登録"  render={record => record.recruiting_count + " 人"}/>
             <FunctionField
                 label="年間休日"
-                render={(r: any) => (typeof r?.holiday_leave === "number" ? `${r.holiday_leave}日` : "未登録")}
+                render={(r: any) => (typeof r?.holiday_leave === "number" ? `${r.holiday_leave} 日` : "未登録")}
             />
             <FunctionField
                 label="賞与"
@@ -97,10 +126,11 @@ export const RequirementShow = () => {
         </TabbedShowLayout.Tab>
 
         <TabbedShowLayout.Tab label="給与・福利厚生">
-            <NumberField source="starting_salary_first" label="月給(1年卒)" options={{ style: "currency", currency: "JPY" }} />
+            {/* <NumberField source="starting_salary_first" label="月給(1年卒)" options={{ style: "currency", currency: "JPY" }} />
             <NumberField source="starting_salary_second" label="月給(2年卒)" options={{ style: "currency", currency: "JPY" }} />
             <NumberField source="starting_salary_third" label="月給(3年卒)" options={{ style: "currency", currency: "JPY" }} />
-            <NumberField source="starting_salary_fourth" label="月給(4年卒)" options={{ style: "currency", currency: "JPY" }} />
+            <NumberField source="starting_salary_fourth" label="月給(4年卒)" options={{ style: "currency", currency: "JPY" }} /> */}
+            <SalaryDatagridSection />
             <ArrayField source="various_allowances" label="各種手当">
                 <Datagrid bulkActionButtons={false}>
                     <TextField source="name" label="対象" />

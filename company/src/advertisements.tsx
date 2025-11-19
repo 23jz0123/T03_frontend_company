@@ -93,21 +93,20 @@ export const AdvertisementShow = () => {
     return (
         <Show actions={<AdvertisementShowActions />}>
             <SimpleShowLayout>
-                <TextField source="id" label="ID" />
                 <TextField source="company_name" label="会社名" />
-                <TextField source="company_id" label="Company ID" />
-                <NumberField source="average_age" label="平均年齢" />
-                <NumberField source="average_continued_service" label="平均勤続年数" />
-                <NumberField source="average_overtime" label="平均残業時間" />
-                <NumberField source="average_paid_vacation" label="平均有給休暇日数" />
+                <FunctionField source="year" label="対象年"  render={record => record.year + " 年"}/>
+                <FunctionField source="average_age" label="平均年齢" render={record => record.average_age + " 歳"} />
+                <FunctionField source="average_continued_service" label="平均勤続年数" render={record => record.average_continued_service + " 年"} />
+                <FunctionField source="average_overtime" label="平均残業時間" render={record => record.average_overtime + " 時間"} />
+                <FunctionField source="average_paid_vacation" label="平均有給休暇日数" render={record => record.average_paid_vacation + " 日"} />
                 <TextField source="briefing_info" label="説明会情報" />
                 <UrlField source="homepage_url" label="ホームページURL" />
                 <UrlField source="mynavi_url" label="マイナビURL" />
                 <UrlField source="rikunavi_url" label="リクナビURL" />
                 <BooleanField source="international_student_recruitment" label="留学生採用" />
                 <TextField source="job_recruiter_name" label="採用担当者名" />
-                <NumberField source="recruiting_count" label="募集人数" />
-                <NumberField source="recruitment" label="採用数" />
+                <FunctionField source="recruiting_count" label="募集人数" render={record => record.recruiting_count + " 人"} />
+                <FunctionField source="recruitment" label="卒業生採用数" render={record => record.recruitment + " 人"} />
                 <ArrayField source="tags" label="タグ">
                     <SingleFieldList linkType={false}>
                         <FunctionField render={(tag: any) => <Chip label={String(tag)} size="small" />} />
@@ -115,7 +114,6 @@ export const AdvertisementShow = () => {
                 </ArrayField>
                 <DateField source="created_at" label="作成日" />
                 <DateField source="updated_at" label="更新日" />
-                <NumberField source="year" label="年" />
                 <RequirementListActions />
                 <ReferenceManyField label="募集要項" reference="requirements" target="advertisement_id">
                     <RequirementColumns />
