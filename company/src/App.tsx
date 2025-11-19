@@ -175,6 +175,8 @@ const customDataProvider: DataProvider = {
         url = `/api/companies/${authId}`;
       } else if (resource === "tags") {
         url = `/api/list/tags`;
+      } else if (resource === "industries") {
+        url = `/api/list/industories`;
       }
 
       console.log('Fetching list for ${resource} from URL:', url);
@@ -447,6 +449,7 @@ const App = () => (
     <Resource name="advertisements" list={AdvertisementsList} show={AdvertisementShow} create={AdvertisementCreate} edit={AdvertisementEdit} options={{label: '求人票一覧'}} />
     <Resource name="requirements" show={RequirementShow} create={RequirementCreate} />
     <Resource name="tags" />
+    <Resource name="industries" />
   </Admin>
 );
 
