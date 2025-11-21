@@ -255,8 +255,34 @@ const customDataProvider: DataProvider = {
         }
 
         const data = await response.json();
+        if (resource === "products" && !data.id) {
+          data.id = authId;
+        }
 
         return { data: { ...data, _full: true } };
+    },
+
+    getMany: async (resource, params) => {
+      const { ids } = params;
+      logDP(`getMany called for ${resource}`, params);
+
+      if (resource === "industries" || resource === "tags") {
+        const url = resource === "industries" ? `/api/list/industories` : `/api/list/tags`;
+        const response = await fetch(url, {
+          headers: new Headers({
+            'Content-Type': 'application/json',
+          }),
+        });
+
+        if (!response.ok) throw new Error(`getMany error: ${response.statusText}`);
+
+        const json = await response.json();
+        const stringIds = ids.map(String);
+        const data = Array.isArray(json) ? json.filter((item: any) => stringIds.includes(String(item.id))) : [];
+
+        return { data };
+      }
+      throw new Error(`getMany not implemented for ${resource}`)
     },
 
 getManyReference: async (resource, params) => {

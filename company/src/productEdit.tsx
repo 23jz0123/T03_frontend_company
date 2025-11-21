@@ -21,8 +21,8 @@ export const ProductEdit = () => {
                 <TextInput source="email" label="メールアドレス" validate={validateRequired}/>
                 <NumberInput source="employee_count" label="従業員数" validate={validateRequired}/>
                 <NumberInput source="foundation" label="設立年" validate={validateRequired}/>
-                <ReferenceArrayInput source="industry_id" reference="industries" label="業界">
-                    <AutocompleteArrayInput optionText="industry_name" />
+                <ReferenceArrayInput source="industry_id" reference="industries" label="業種">
+                    <AutocompleteArrayInput optionText="industry_name" label="業種"/>
                 </ReferenceArrayInput>
                 <TextInput source="introduction" label="会社紹介文" validate={validateRequired}/>
                 <TextInput source="office_location" label="事業所" validate={validateRequired}/>
