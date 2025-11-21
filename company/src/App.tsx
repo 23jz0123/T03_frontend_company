@@ -212,6 +212,7 @@ const customDataProvider: DataProvider = {
         logDP('getOne called with resource:', resource, 'params:', params);
         let url;
         const authId = localStorage.getItem('auth_id');
+        let currentAdvId = null;
 
         if (resource === "advertisements") {
           const { id } = params;
@@ -224,6 +225,7 @@ const customDataProvider: DataProvider = {
           if (!id) throw new Error("id is required");
 
           const advId = sessionStorage.getItem(`reqAdv:${id}`);
+          currentAdvId = advId;
           let companyId =
           sessionStorage.getItem(`reqCompany:${id}`) ||
           (advId ? sessionStorage.getItem(`advCompany:${advId}`) : null);
@@ -255,6 +257,11 @@ const customDataProvider: DataProvider = {
         }
 
         const data = await response.json();
+
+        if (resource === "requirements" && currentAdvId) {
+          data.advertisement_id = currentAdvId;
+        }
+
         if (resource === "products" && !data.id) {
           data.id = authId;
         }
@@ -311,6 +318,7 @@ getManyReference: async (resource, params) => {
 
     if (Array.isArray(data)) {
       data.forEach((req: any) => {
+        req.advertisement_id = advertisementId;
         if (req?.id != null) {
           sessionStorage.setItem(`reqAdv:${req.id}`, String(advertisementId));
           sessionStorage.setItem(`reqCompany:${req.id}`, String(companyId));
