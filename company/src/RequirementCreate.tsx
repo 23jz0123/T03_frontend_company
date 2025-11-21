@@ -2,9 +2,12 @@ import { Create, SimpleForm, TextInput, NumberInput, useRedirect, useNotify, use
 import { useLocation } from "react-router-dom";
 
 export const RequirementCreate = () => {
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const advertisementId = params.get("advertisement_id");
     return (
-        <Create resource="requirements">
-            <SimpleForm>
+        <Create resource="requirements" title="募集要項の作成">
+            <SimpleForm defaultValues={{ advertisement_id: advertisementId}}>
             <TextInput source="employee_status" label="雇用形態" />
             <TextInput source="requirement_flow" label="採用フロー" />
             <TextInput source="required_days" label="内々定までの所要日数" />

@@ -3,8 +3,13 @@ import { useLocation } from "react-router-dom";
 
 const validateRequired = required('必須項目です');
 
-export const AdvertisementCreate = () => (
-    <Create resource="advertisements">
+export const AdvertisementCreate = () => {
+    const redirect = (resource: string, id: string | number, data: any) => {
+        return `/requirements/create?advertisement_id=${id}`;
+    }
+
+    return (
+    <Create redirect={redirect} resource="advertisements" title="求人票の新規作成">
         <SimpleForm>
         <NumberInput source="year" label="年度" validate={validateRequired} />
         <NumberInput source="recruiting_count" label="募集人数" validate={validateRequired} />
@@ -24,4 +29,5 @@ export const AdvertisementCreate = () => (
         </ReferenceArrayInput>
         </SimpleForm>
     </Create>
-);
+    );
+};
