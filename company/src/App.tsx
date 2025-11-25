@@ -177,6 +177,14 @@ const customDataProvider: DataProvider = {
         url = `/api/list/tags`;
       } else if (resource === "industries") {
         url = `/api/list/industories`;
+      } else if (resource === "job_categories") {
+        url = `/api/list/job_categories`;
+      } else if (resource === "prefectures") {
+        url = `/api/list/prefectures`;
+      } else if (resource === "welfare_benefits") {
+        url = `/api/list/benefits`;
+      } else if (resource === "submission_objects") {
+        url = `/api/list/submission_objects`;
       }
 
       console.log('Fetching list for ${resource} from URL:', url);
@@ -272,23 +280,28 @@ const customDataProvider: DataProvider = {
     getMany: async (resource, params) => {
       const { ids } = params;
       logDP(`getMany called for ${resource}`, params);
+      let url = "";
 
-      if (resource === "industries" || resource === "tags") {
-        const url = resource === "industries" ? `/api/list/industories` : `/api/list/tags`;
-        const response = await fetch(url, {
-          headers: new Headers({
-            'Content-Type': 'application/json',
-          }),
-        });
-
-        if (!response.ok) throw new Error(`getMany error: ${response.statusText}`);
-
-        const json = await response.json();
-        const stringIds = ids.map(String);
-        const data = Array.isArray(json) ? json.filter((item: any) => stringIds.includes(String(item.id))) : [];
-
-        return { data };
+      if (["tags", "job_categories", "prefectures", "submission_objects"].includes(resource)) {
+        url = `/api/list/${resource}`;
+      } else if (resource === "industries") {
+        url = `/api/list/industories`;
+      } else if (resource === "welfare_benefits") {
+        url = `/api/list/benefits`;
       }
+      const response = await fetch(url, {
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      });
+
+      if (!response.ok) throw new Error(`getMany error: ${response.statusText}`);
+
+      const json = await response.json();
+      const stringIds = ids.map(String);
+      const data = Array.isArray(json) ? json.filter((item: any) => stringIds.includes(String(item.id))) : [];
+
+      return { data };
       throw new Error(`getMany not implemented for ${resource}`)
     },
 
@@ -484,6 +497,10 @@ const App = () => (
     <Resource name="requirements" show={RequirementShow} create={RequirementCreate} />
     <Resource name="tags" />
     <Resource name="industries" />
+    <Resource name="job_categories" />  
+    <Resource name="prefectures" />
+    <Resource name="welfare_benefits" />
+    <Resource name="submission_objects" />
   </Admin>
 );
 
