@@ -3,6 +3,7 @@ import { Create,
         TextInput,
         NumberInput,
         ReferenceArrayInput,
+        ReferenceInput,
         AutocompleteArrayInput,
         required,
         SelectInput,
@@ -21,9 +22,9 @@ export const RequirementCreate = () => {
     return (
         <Create resource="requirements" title="募集要項の作成">
             <SimpleForm defaultValues={{ advertisement_id: advertisementId}}>
-                <ReferenceArrayInput source="job_category_id" reference="job_categories" label="職種">
-                    <AutocompleteArrayInput optionText="name" label="職種" validate={validateRequired} />
-                </ReferenceArrayInput>
+                <ReferenceInput source="job_category_id" reference="job_categories" label="職種">
+                    <SelectInput optionText="job_category_name" label="職種" validate={validateRequired} />
+                </ReferenceInput>
 
                 <SelectInput source="employment_status" label="雇用形態" choices={[
                     { id: '正社員', name: '正社員' },
@@ -32,13 +33,13 @@ export const RequirementCreate = () => {
                     { id: '業務委託', name: '業務委託' },
                 ]} validate={validateRequired} />
                 <ReferenceArrayInput source="prefecture_id" reference="prefectures" label="勤務地 (都道府県)">
-                    <SelectArrayInput optionText="name" label="勤務地 (都道府県)" validate={validateRequired} />
+                    <SelectArrayInput optionText="prefecture" label="勤務地 (都道府県)" validate={validateRequired} />
                 </ReferenceArrayInput>
                 <NumberInput source="recruiting_count" label="募集人数" validate={validateRequired} />
                 <TextInput source="requirement_flow" label="採用フロー" validate={validateRequired} />
                 <TextInput source="required_days" label="内々定までの所要日数" validate={validateRequired} />
                 <ReferenceArrayInput source="submission_objects_id" reference="submission_objects" label="提出物">
-                    <SelectArrayInput optionText="name" label="提出物" validate={validateRequired} />
+                    <SelectArrayInput optionText="submission_object_name" label="提出物" validate={validateRequired} />
                 </ReferenceArrayInput>
                 <NumberInput source="starting_salary_first" label="初任給 (1年卒)" />
                 <NumberInput source="starting_salary_second" label="初任給 (2年卒)" validate={validateRequired} />
@@ -68,7 +69,7 @@ export const RequirementCreate = () => {
                     </SimpleFormIterator>
                 </ArrayInput>
                 <ReferenceArrayInput source="welfare_benefits_id" reference="welfare_benefits" label="福利厚生">
-                    <SelectArrayInput optionText="name" label="福利厚生" />
+                    <SelectArrayInput optionText="welfare_benefit" label="福利厚生" />
                 </ReferenceArrayInput>
                 <TextInput source="note" label="備考" multiline />
             </SimpleForm>
