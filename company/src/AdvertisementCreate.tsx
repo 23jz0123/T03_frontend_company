@@ -1,4 +1,4 @@
-import { Create, SimpleForm, TextInput, NumberInput, required, useRedirect, useNotify, useDataProvider, ReferenceArrayInput, AutocompleteArrayInput } from "react-admin";
+import { Create, SimpleForm, TextInput, NumberInput, required, SelectInput, useNotify, useDataProvider, ReferenceArrayInput, AutocompleteArrayInput } from "react-admin";
 import { useLocation } from "react-router-dom";
 
 const validateRequired = required('必須項目です');
@@ -13,8 +13,11 @@ export const AdvertisementCreate = () => {
         <SimpleForm>
         <NumberInput source="year" label="年度" validate={validateRequired} />
         <NumberInput source="recruiting_count" label="募集人数" validate={validateRequired} />
-        <NumberInput source="recruitment" label="本校卒業生採用" validate={validateRequired} />
-        <NumberInput source="international_student_recruitment" label="留学生採用" validate={validateRequired} />
+        <NumberInput source="recruitment" label="本校卒業生採用数" validate={validateRequired} />
+        <SelectInput source="international_student_recruitment" label="留学生採用" choices={[
+                            { id: true, name: 'あり' },
+                            { id: false, name: 'なし' },
+                        ]} validate={validateRequired} />
         <NumberInput source="average_age" label="平均年齢" validate={validateRequired} step="any" />
         <NumberInput source="average_continued_service" label="平均勤続年数" validate={validateRequired} step="any" />
         <NumberInput source="average_overtime" label="月平均所定外労働時間" validate={validateRequired} step="any" />
