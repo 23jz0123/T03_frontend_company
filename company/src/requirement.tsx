@@ -165,6 +165,7 @@ export const RequirementShow = () => {
             <ArrayField source="various_allowances" label="各種手当">
                 <Datagrid bulkActionButtons={false}>
                     <TextField source="name" label="対象" />
+                    <FunctionField source="grade" label="対象年" render={record => record.grade + "年"}/>
                     <NumberField source="allowance" label="金額" options={{ style: "currency", currency: "JPY" }} />
                 </Datagrid>
             </ArrayField>

@@ -36,7 +36,7 @@ export const RequirementCreate = () => {
                     <SelectArrayInput optionText="prefecture" label="勤務地 (都道府県)" validate={validateRequired} />
                 </ReferenceArrayInput>
                 <NumberInput source="recruiting_count" label="募集人数" validate={validateRequired} />
-                <TextInput source="requirement_flow" label="採用フロー" validate={validateRequired} />
+                <TextInput source="recruitment_flow" label="採用フロー" validate={validateRequired} />
                 <TextInput source="required_days" label="内々定までの所要日数" validate={validateRequired} />
                 <ReferenceArrayInput source="submission_objects_id" reference="submission_objects" label="提出物">
                     <SelectArrayInput optionText="submission_object_name" label="提出物" validate={validateRequired} />
@@ -52,19 +52,23 @@ export const RequirementCreate = () => {
                 <SelectInput source="employee_dormitory" label="社員寮" choices={[
                     { id: 'あり', name: 'あり' },
                     { id: 'なし', name: 'なし' },
+                    { id: '不明', name: '不明' },
                 ]} validate={validateRequired} />
                 <SelectInput source="contract_housing" label="借上社宅" choices={[
                     { id: 'あり', name: 'あり' },
                     { id: 'なし', name: 'なし' },
+                    { id: '不明', name: '不明' },
                 ]} validate={validateRequired} />
-                <TextInput source="working_hour" label="勤務時間" validate={validateRequired} />
+                <TextInput source="working_hours" label="勤務時間" validate={validateRequired} />
                 <SelectInput source="flex" label="フレックス" choices={[
                     { id: 'あり', name: 'あり' },
                     { id: 'なし', name: 'なし' },
+                    { id: '不明', name: '不明' },
                 ]} validate={validateRequired} />
                 <ArrayInput source="various_allowances" label="諸手当">
                     <SimpleFormIterator>
                         <TextInput source="name" label="手当名" />
+                        <NumberInput source="grade" label="対象年" />
                         <NumberInput source="allowance" label="金額" />
                     </SimpleFormIterator>
                 </ArrayInput>

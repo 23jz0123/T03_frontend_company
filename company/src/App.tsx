@@ -355,10 +355,12 @@ getManyReference: async (resource, params) => {
       url = `/api/companies/${authId}/advertisements/${advId}/requirements`;
 
       dataToSubmit = {
-        advertisement_id: advId,
+        ...params.data,
+        advertisement_id: Number(advId),
         updated_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
       }
+      console.log("Creating requirement with data:", dataToSubmit); 
     } else {
       throw new Error(`リソース ${resource} の作成はサポートされていません。`);
     }

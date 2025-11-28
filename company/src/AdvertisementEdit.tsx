@@ -16,7 +16,7 @@ export const AdvertisementEdit = () => {
             <SimpleForm>
                 <NumberInput source="year" label="年度" validate={validateRequired} />
                 <NumberInput source="recruiting_count" label="募集人数" validate={validateRequired} />
-                <NumberInput source="recruitment" label="本校卒業生採用" validate={validateRequired} />
+                <NumberInput source="recruitment" label="本校卒業生採用数" validate={validateRequired} />
                 <NumberInput source="international_student_recruitment" label="留学生採用" validate={validateRequired} />
                 <NumberInput source="average_age" label="平均年齢" validate={validateRequired} step="any" />
                 <NumberInput source="average_continued_service" label="平均勤続年数" validate={validateRequired} step="any" />
