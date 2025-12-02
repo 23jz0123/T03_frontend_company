@@ -14,6 +14,17 @@ import { ProductEdit } from './productEdit';
 
 const logDP = (...args: any[]) => console.debug("[DP]", ...args);
 
+const toNumber = (val: any): number => {
+  if(val === null || val === undefined || val === "") return 0;
+  const number = Number(val);
+  return isNaN(number) ? 0 : number;
+};
+
+const toStringSafe = (val: any): string => {
+  if (val === null || val === undefined) return "";
+  return String(val);
+};
+
 const customAuthProvider = {
   async login({username, password}) {
     const request = new Request('api/auth/company/login', {
@@ -354,9 +365,71 @@ getManyReference: async (resource, params) => {
 
       url = `/api/companies/${authId}/advertisements/${advId}/requirements`;
 
+      const processedAllowances: any[] = [];
+      if(Array.isArray(params.data.various_allowances)) {
+        params.data.various_allowances.forEach((item: any) => {
+          const name = toStringSafe(item.name);
+          // first_allowance -> grade 1
+          if (item.first_allowance !== undefined && item.first_allowance !== null && item.first_allowance !== "") {
+            processedAllowances.push({ name: name, allowance: Number(item.first_allowance), grade: 1 });
+        }
+        // second_allowance -> grade 2
+        if (item.second_allowance !== undefined && item.second_allowance !== null && item.second_allowance !== "") {
+            processedAllowances.push({ name: name, allowance: Number(item.second_allowance), grade: 2 });
+        }
+        // third_allowance -> grade 3
+        if (item.third_allowance !== undefined && item.third_allowance !== null && item.third_allowance !== "") {
+            processedAllowances.push({ name: name, allowance: Number(item.third_allowance), grade: 3 });
+        }
+        // fourth_allowance -> grade 4
+        if (item.fourth_allowance !== undefined && item.fourth_allowance !== null && item.fourth_allowance !== "") {
+            processedAllowances.push({ name: name, allowance: Number(item.fourth_allowance), grade: 4 });
+        }
+        });
+      }
+
       dataToSubmit = {
-        ...params.data,
         advertisement_id: Number(advId),
+        job_category_id: toNumber(params.data.job_category_id),
+            
+        // 文字列系 (undefined対策)
+        recruitment_flow: toStringSafe(params.data.recruitment_flow),
+        employment_status: toStringSafe(params.data.employment_status),
+        required_days: toStringSafe(params.data.required_days),
+        trial_period: toStringSafe(params.data.trial_period),
+        working_hours: toStringSafe(params.data.working_hours),
+        note: toStringSafe(params.data.note),
+
+        // 数値系
+        recruiting_count: toNumber(params.data.recruiting_count),
+        starting_salary_first: toNumber(params.data.starting_salary_first),
+        starting_salary_second: toNumber(params.data.starting_salary_second),
+        starting_salary_third: toNumber(params.data.starting_salary_third),
+        starting_salary_fourth: toNumber(params.data.starting_salary_fourth),
+        salary_increase: toNumber(params.data.salary_increase),
+        bonus: toNumber(params.data.bonus),
+        holiday_leave: toNumber(params.data.holiday_leave),
+
+        // Boolean(Varchar)系 "あり"/"なし"
+        flex: params.data.flex,
+        employee_dormitory: params.data.employee_dormitory,
+        contract_housing: params.data.contract_housing,
+
+        // 配列系
+        submission_objects_id: Array.isArray(params.data.submission_objects_id) 
+            ? params.data.submission_objects_id.map(Number) 
+            : [],
+
+        prefecture_id: Array.isArray(params.data.prefecture_id)
+            ? params.data.prefecture_id.map(Number)
+            : (params.data.prefecture_id ? [toNumber(params.data.prefecture_id)] : []),
+
+        welfare_benefits_id: Array.isArray(params.data.welfare_benefits_id)
+            ? params.data.welfare_benefits_id.map(Number)
+            : [],
+
+        // ★変換した諸手当データをここでセット
+        various_allowances: processedAllowances,
         updated_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
       }
