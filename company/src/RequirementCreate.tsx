@@ -116,11 +116,11 @@ export const RequirementCreate = () => {
                 ]} validate={validateRequired} />
                 <ArrayInput source="various_allowances" label="諸手当">
                     <SimpleFormIterator>
-                        <TextInput source="name" label="手当名" />
-                        <NumberInput source="first_allowance" label="金額(1年卒)" />
-                        <NumberInput source="second_allowance" label="金額(2年卒)" />
-                        <NumberInput source="third_allowance" label="金額(3年卒)" />
-                        <NumberInput source="fourth_allowance" label="金額(4年卒)" />
+                        <TextInput source="name" label="手当名" placeholder="例：住宅手当" helperText="手当名を入力してください" />
+                        <NumberInput source="first_allowance" label="金額(1年卒)" placeholder="10000" helperText="半角英数字で入力してください" />
+                        <NumberInput source="second_allowance" label="金額(2年卒)" placeholder="10000" helperText="半角英数字で入力してください" />
+                        <NumberInput source="third_allowance" label="金額(3年卒)" placeholder="10000" helperText="半角英数字で入力してください" />
+                        <NumberInput source="fourth_allowance" label="金額(4年卒)" placeholder="10000" helperText="半角英数字で入力してください" />
                     </SimpleFormIterator>
                 </ArrayInput>
                 <ReferenceArrayInput source="welfare_benefits_id" reference="welfare_benefits" label="福利厚生">
