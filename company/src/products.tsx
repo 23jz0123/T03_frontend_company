@@ -37,6 +37,7 @@ export const ProductShow = () => {
         <Show resource="products" id={identity.id} actions={<ProductShowActions />}>
             <SimpleShowLayout>
                 <TextField source="company_name" label="会社名"/>
+                <TextField source="company_name_furigana" label="会社名(ふりがな)"/>
                 <TextField source="address" label="住所"/>
                 <RichTextField source="business_detail" label="事業内容"/>
                 <NumberField source="capital" label="資本金" options={{ style: 'currency', currency: 'JPY' }}/>
