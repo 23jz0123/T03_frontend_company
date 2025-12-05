@@ -90,7 +90,7 @@ const RequirementShowActions = () => {
                     />
                 )}
             </Box>
-            <EditButton />
+            <EditButton label="編集"/>
         </TopToolbar>
     )
 }
@@ -165,8 +165,10 @@ export const RequirementShow = () => {
             <ArrayField source="various_allowances" label="各種手当">
                 <Datagrid bulkActionButtons={false}>
                     <TextField source="name" label="対象" />
-                    <FunctionField source="grade" label="対象年" render={record => record.grade + "年"}/>
-                    <NumberField source="allowance" label="金額" options={{ style: "currency", currency: "JPY" }} />
+                    <NumberField source="first_allowance" label="1年卒" options={{ style: "currency", currency: "JPY" }}/>
+                    <NumberField source="second_allowance" label="2年卒" options={{ style: "currency", currency: "JPY" }}/>
+                    <NumberField source="third_allowance" label="3年卒" options={{ style: "currency", currency: "JPY" }}/>
+                    <NumberField source="fourth_allowance" label="4年卒" options={{ style: "currency", currency: "JPY" }}/>
                 </Datagrid>
             </ArrayField>
             <ArrayField source="welfare_benefits" label="福利厚生">

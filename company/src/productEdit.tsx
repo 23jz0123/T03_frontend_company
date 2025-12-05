@@ -14,7 +14,12 @@ export const ProductEdit = () => {
     return (
         <Edit>
             <SimpleForm>
-                <TextInput source="company_name" label="会社名" validate={validateRequired}/>
+                <TextInput
+                    source="company_name"
+                    label="会社名"
+
+                    validate={validateRequired}/>
+                <TextInput source="company_name_furigana" label="会社名(ふりがな)" validate={validateRequired}/>
                 <TextInput source="address" label="住所" validate={validateRequired}/>
                 <TextInput source="business_detail" label="事業内容" validate={validateRequired}/>
                 <NumberInput source="capital" label="資本金" validate={validateRequired}/>
