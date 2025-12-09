@@ -100,17 +100,17 @@ export const AdvertisementShow = () => {
                 <FunctionField
                   source="homepage_url"
                   label="ホームページURL"
-                  render={record => record.homepage_url ? <UrlField source="homepage_url" label="ホームページURL" /> : "未登録"}
+                  render={record => record.homepage_url ? <UrlField source="homepage_url" label="ホームページURL" target="_blank"/> : "未登録"}
                 />
                 <FunctionField
                   source="mynavi_url"
                   label="マイナビURL"
-                  render={record => record.mynavi_url ? <UrlField source="mynavi_url" label="マイナビURL" /> : "未登録"}
+                  render={record => record.mynavi_url ? <UrlField source="mynavi_url" label="マイナビURL" target="_blank"/> : "未登録"}
                 />
                 <FunctionField
                   source="rikunavi_url"
                   label="リクナビURL"
-                  render={record => record.rikunavi_url ? <UrlField source="rikunavi_url" label="リクナビURL" /> : "未登録"}
+                  render={record => record.rikunavi_url ? <UrlField source="rikunavi_url" label="リクナビURL" target="_blank"/> : "未登録"}
                 />
                 <FunctionField
                   source="international_student_recruitment"

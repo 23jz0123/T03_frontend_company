@@ -36,33 +36,115 @@ export const CompanyCreate = () => {
   
         sessionStorage.removeItem('register_account_id');
         notify("会社情報が作成されました", { type: "success" });
-        redirect("/login");
+        // redirect("/login");
+        window.location.href = "/products";
       } catch (error) {
         notify("会社情報の作成に失敗しました", { type: "error" });
       }
     };
   
   return (
-    <Create resource="requirements">
-      <SimpleForm>
-        <TextInput source="company_name" label="会社名" validate={validateRequired} />
-        <NumberInput source="capital" label="資本金" validate={validateRequired} />
-        <NumberInput source="sales" label="売上高" validate={validateRequired} />
-        <NumberInput source="employee_count" label="従業員数" validate={validateRequired} />
-        <TextInput source="representative_name" label="代表者名" validate={validateRequired} />
-        <TextInput source="profile" label="プロフィール" multiline />
-        <TextInput source="introduction" label="会社紹介" multiline />
-        <TextInput source="business_detail" label="事業内容" multiline />
-        <NumberInput source="postal_code" label="郵便番号" validate={validateRequired} />
-        <TextInput source="address" label="住所" validate={validateRequired} />
-        <NumberInput source="phone_number" label="電話番号" validate={validateRequired} />
-        <TextInput source="email" label="メールアドレス" validate={validateRequired} />
-        <NumberInput source="foundation" label="設立年" validate={validateRequired} />
-        <TextInput source="service_achievement" label="サービス実績" multiline />
-        <TextInput source="office_location" label="オフィス所在地" />
-        <ReferenceArrayInput source="industry_id" reference="industries" label="業界">
-            <AutocompleteArrayInput optionText="industry_name" label="業界" validate={validateRequired} />
-        </ReferenceArrayInput>
+    <Create resource="company" title="会社情報の新規作成" onSubmit={handleSubmit}>
+      <SimpleForm defaultValues={{ account_id: accountId}}>
+          <TextInput source="account_id" sx={{ display: 'none' }} />
+          <TextInput
+              source="company_name"
+              label="会社名"
+              placeholder="例：株式会社〇〇"
+              helperText=""
+              validate={validateRequired}/>
+          <TextInput
+              source="company_name_furigana"
+              label="会社名(ふりがな)"
+              placeholder="例：かぶしきがいしゃ〇〇"
+              helperText="会社名をひらがなで入力してください"
+              validate={validateRequired}/>
+          <TextInput
+              source="address"
+              label="住所"
+              placeholder="例：東京都新宿区百人町1丁目25-4"
+              helperText="本社の住所を入力してください"
+              validate={validateRequired}/>
+          <TextInput
+              source="business_detail"
+              label="事業内容" 
+              placeholder="例：ソフトウェア開発、ITコンサルティング"
+              helperText="会社の主な事業内容を入力してください"
+              validate={validateRequired}/>
+          <NumberInput
+              source="capital"
+              label="資本金"
+              placeholder="例：5000000"
+              helperText="半角数字で入力してください"
+              validate={validateRequired}/>
+          <TextInput
+              source="email" 
+              label="メールアドレス" 
+              placeholder=""
+              helperText="半角で入力してください"
+              validate={validateRequired}/>
+          <NumberInput
+              source="employee_count" 
+              label="従業員数" 
+              placeholder="例：150"
+              helperText="半角数字で入力してください"
+              validate={validateRequired}/>
+          <NumberInput 
+              source="foundation" 
+              label="設立年"
+              placeholder="例：2005"
+              helperText="半角数字で入力してください"
+              validate={validateRequired}/>
+          <ReferenceArrayInput source="industry_id" reference="industries" label="業種">
+              <AutocompleteArrayInput optionText="industry_name" label="業種" helperText="複数選択可"/>
+          </ReferenceArrayInput>
+          <TextInput
+              source="introduction" 
+              label="会社紹介文" 
+              placeholder="例：私たち〇〇株式会社は、..."
+              helperText="会社の紹介文を入力してください"
+              validate={validateRequired}/>
+          <TextInput
+              source="office_location" 
+              label="事業所" 
+              placeholder="例：東京都新宿区、大阪府大阪市"
+              helperText="事業所の所在地を入力してください"
+              validate={validateRequired}/>
+          <NumberInput 
+              source="phone_number"
+              label="電話番号"
+              helperText="半角数字のみで入力してください"
+              validate={validateRequired}/>
+          <NumberInput
+              source="postal_code"
+              label="郵便番号" 
+              placeholder="例：1600023"
+              helperText="半角数字のみで入力してください"
+              validate={validateRequired}/>
+          <TextInput
+              source="profile"
+              label="プロフィール"
+              placeholder="例：〇〇業界での豊富な経験を持つ企業です。"
+              helperText="会社のプロフィールを入力してください"
+              validate={validateRequired}/>
+          <TextInput
+              source="representative_name"
+              label="採用担当者"
+              placeholder="例：山田 太郎"
+              helperText="採用担当者の名前を入力してください"
+              validate={validateRequired}/>
+          <NumberInput
+              source="sales"
+              label="売上"
+              placeholder="例：100000000"
+              helperText="半角数字で入力してください"
+              validate={validateRequired}/>
+          <TextInput
+              source="service_achievement"
+              label="主な事業実績"
+              placeholder="例：大手企業向けシステム開発"
+              helperText="会社の主な事業実績を入力してください"
+              validate={validateRequired}/>
       </SimpleForm>
     </Create>
   );
