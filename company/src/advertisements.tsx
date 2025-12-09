@@ -90,6 +90,7 @@ export const AdvertisementShow = () => {
           <TabbedShowLayout>
             <TabbedShowLayout.Tab label="求人情報">
                 <TextField source="company_name" label="会社名" />
+                <TextField source="company_name_furigana" label="会社名(ふりがな)" />
                 <FunctionField source="year" label="対象年"  render={record => record.year + " 年"}/>
                 <FunctionField source="average_age" label="平均年齢" render={record => record.average_age + " 歳"} />
                 <FunctionField source="average_continued_service" label="平均勤続年数" render={record => record.average_continued_service + " 年"} />

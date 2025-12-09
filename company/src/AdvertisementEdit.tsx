@@ -3,6 +3,7 @@ import {
     SimpleForm,
     TextInput,
     NumberInput,
+    SelectInput,
     required,
     ReferenceArrayInput,
     AutocompleteArrayInput 
@@ -14,22 +15,81 @@ export const AdvertisementEdit = () => {
     return (
         <Edit>
             <SimpleForm>
-                <NumberInput source="year" label="年度" validate={validateRequired} />
-                <NumberInput source="recruiting_count" label="募集人数" validate={validateRequired} />
-                <NumberInput source="recruitment" label="本校卒業生採用数" validate={validateRequired} />
-                <NumberInput source="international_student_recruitment" label="留学生採用" validate={validateRequired} />
-                <NumberInput source="average_age" label="平均年齢" validate={validateRequired} step="any" />
-                <NumberInput source="average_continued_service" label="平均勤続年数" validate={validateRequired} step="any" />
-                <NumberInput source="average_overtime" label="月平均所定外労働時間" validate={validateRequired} step="any" />
-                <NumberInput source="average_paid_vacation" label="平均有給休暇取得日数" validate={validateRequired} step="any" />
-                <TextInput source="homepage_url" label="ホームページURL" />
-                <TextInput source="mynavi_url" label="マイナビURL" />
-                <TextInput source="rikunavi_url" label="リクナビURL" />
-                <TextInput source="job_recruiter_name" label="採用担当者名" validate={validateRequired} />
-                <TextInput source="briefing_info" label="説明会資料URL" />
-                <ReferenceArrayInput source="tag_ids" reference="tags" label="タグ">
-                    <AutocompleteArrayInput optionText="tag_name" />
-                </ReferenceArrayInput>
+                <NumberInput 
+                            source="year"
+                            label="年度"
+                            placeholder="2026"
+                            helperText="半角数字で入力してください"
+                            validate={validateRequired} />
+                        <NumberInput
+                            source="recruiting_count"
+                            label="募集人数"
+                            placeholder="100"
+                            helperText="半角数字で入力してください"
+                            validate={validateRequired}/>
+                        <NumberInput
+                            source="recruitment"
+                            label="本校卒業生採用数"
+                            placeholder="10"
+                            helperText="半角数字で入力してください"
+                            validate={validateRequired} />
+                        <SelectInput source="international_student_recruitment" label="留学生採用" choices={[
+                                            { id: true, name: 'あり' },
+                                            { id: false, name: 'なし' },
+                                        ]} validate={validateRequired} />
+                        <NumberInput
+                            source="average_age"
+                            label="平均年齢"
+                            placeholder="35.5"
+                            helperText="半角数字で入力してください"
+                            validate={validateRequired} step="any" />
+                        <NumberInput
+                            source="average_continued_service"
+                            label="平均勤続年数" 
+                            placeholder="12.5"
+                            helperText="半角数字で入力してください"
+                            validate={validateRequired} step="any" />
+                        <NumberInput
+                            source="average_overtime"
+                            label="月平均所定外労働時間"
+                            placeholder="20.5"
+                            helperText="半角数字で入力してください"
+                            validate={validateRequired} step="any" />
+                        <NumberInput
+                            source="average_paid_vacation"
+                            label="平均有給休暇取得日数"
+                            placeholder="10.5"
+                            helperText="半角数字で入力してください"
+                            validate={validateRequired} step="any" />
+                        <TextInput
+                            source="homepage_url"
+                            label="ホームページURL"
+                            placeholder="https://example.co.jp/recruit/..."
+                            helperText="ホームページのURLを入力してください"/>
+                        <TextInput
+                            source="mynavi_url"
+                            label="マイナビURL"
+                            placeholder="https://example.co.jp/recruit/..."
+                            helperText="マイナビのURLがあれば入力してください" />
+                        <TextInput
+                            source="rikunavi_url"
+                            label="リクナビURL"
+                            placeholder="https://example.co.jp/recruit/..."
+                            helperText="リクナビのURLがあれば入力してください" />
+                        <TextInput
+                            source="job_recruiter_name"
+                            label="採用担当者名"
+                            placeholder="山田 太郎"
+                            helperText="採用担当者の名前を入力してください"
+                            validate={validateRequired} />
+                        <TextInput
+                            source="briefing_info"
+                            label="説明会資料URL"
+                            placeholder="https://example.co.jp/recruit/..."
+                            helperText="説明会資料のURLがあれば入力してください" />
+                        <ReferenceArrayInput source="tag_ids" reference="tags" label="タグ">
+                            <AutocompleteArrayInput optionText="tag_name" helperText="複数選択可"/>
+                        </ReferenceArrayInput>
             </SimpleForm>
         </Edit>
     );
