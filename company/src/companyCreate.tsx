@@ -2,7 +2,6 @@ import { Create, SimpleForm, TextInput, required, NumberInput, useRedirect, useN
 import { useLocation } from "react-router-dom";
 
 export const CompanyCreate = () => {
-  const redirect = useRedirect();
   const notify = useNotify();
   const dataProvider = useDataProvider();
   const location = useLocation();
@@ -36,16 +35,16 @@ export const CompanyCreate = () => {
   
         sessionStorage.removeItem('register_account_id');
         notify("会社情報が作成されました", { type: "success" });
-        // redirect("/login");
-        window.location.href = "/products";
+        localStorage.removeItem('auth_id');
+        window.location.href = `/login`;
       } catch (error) {
         notify("会社情報の作成に失敗しました", { type: "error" });
       }
     };
   
   return (
-    <Create resource="company" title="会社情報の新規作成" onSubmit={handleSubmit}>
-      <SimpleForm defaultValues={{ account_id: accountId}}>
+    <Create resource="company" title="会社情報の新規作成" redirect={false}>
+      <SimpleForm defaultValues={{ account_id: accountId}} onSubmit={handleSubmit}>
           <TextInput source="account_id" sx={{ display: 'none' }} />
           <TextInput
               source="company_name"
