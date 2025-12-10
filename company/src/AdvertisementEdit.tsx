@@ -6,14 +6,14 @@ import {
     SelectInput,
     required,
     ReferenceArrayInput,
-    AutocompleteArrayInput 
+    CheckboxGroupInput
 } from "react-admin";
 
 const validateRequired = required('必須項目です');
 
 export const AdvertisementEdit = () => {
     return (
-        <Edit>
+        <Edit title="求人票編集">
             <SimpleForm>
                 <NumberInput 
                             source="year"
@@ -33,10 +33,7 @@ export const AdvertisementEdit = () => {
                             placeholder="10"
                             helperText="半角数字で入力してください"
                             validate={validateRequired} />
-                        <SelectInput source="international_student_recruitment" label="留学生採用" choices={[
-                                            { id: true, name: 'あり' },
-                                            { id: false, name: 'なし' },
-                                        ]} validate={validateRequired} />
+                        <NumberInput source="age_limit" label="留学生採用" />
                         <NumberInput
                             source="average_age"
                             label="平均年齢"
@@ -88,7 +85,7 @@ export const AdvertisementEdit = () => {
                             placeholder="https://example.co.jp/recruit/..."
                             helperText="説明会資料のURLがあれば入力してください" />
                         <ReferenceArrayInput source="tag_ids" reference="tags" label="タグ">
-                            <AutocompleteArrayInput optionText="tag_name" helperText="複数選択可"/>
+                            <CheckboxGroupInput optionText="tag_name" helperText="複数選択可"/>
                         </ReferenceArrayInput>
             </SimpleForm>
         </Edit>

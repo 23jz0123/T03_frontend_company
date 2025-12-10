@@ -5,14 +5,14 @@ import {
     NumberInput,
     required, 
     ReferenceArrayInput,
-    AutocompleteArrayInput
+    CheckboxGroupInput
 } from "react-admin";
 
 const validateRequired = required('必須項目です');
 
 export const ProductEdit = () => {
     return (
-        <Edit>
+        <Edit title="会社情報編集">
             <SimpleForm>
                 <TextInput
                     source="company_name"
@@ -63,7 +63,7 @@ export const ProductEdit = () => {
                     helperText="半角数字で入力してください"
                     validate={validateRequired}/>
                 <ReferenceArrayInput source="industry_id" reference="industries" label="業種">
-                    <AutocompleteArrayInput optionText="industry_name" label="業種" helperText="複数選択可"/>
+                    <CheckboxGroupInput optionText="industry_name" label="業種" helperText="複数選択可"/>
                 </ReferenceArrayInput>
                 <TextInput
                     source="introduction" 

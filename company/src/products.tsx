@@ -34,7 +34,7 @@ export const ProductShow = () => {
         return <div>ログイン情報が見つかりません</div>;
     }
     return (
-        <Show resource="products" id={identity.id} actions={<ProductShowActions />}>
+        <Show resource="products" id={identity.id} actions={<ProductShowActions />} title="会社情報">
             <SimpleShowLayout>
                 <TextField source="company_name" label="会社名"/>
                 <TextField source="company_name_furigana" label="会社名(ふりがな)"/>

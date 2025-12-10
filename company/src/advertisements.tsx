@@ -78,7 +78,18 @@ return (
 />
 <NumberField source="starting_salary_second" label="月給(2年卒)" options={{ style: "currency", currency: "JPY" }} />
 
-<DateField source="updated_at" label="更新日" />
+<DateField
+    source="updated_at"
+    label="最終更新日"
+    showTime 
+    locales="ja-JP" 
+    options={{ 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    }}/>
 
 </Datagrid>
 );
@@ -86,7 +97,7 @@ return (
 
 export const AdvertisementShow = () => {
     return (
-        <Show actions={<AdvertisementShowActions />}>
+        <Show actions={<AdvertisementShowActions />} title="求人票詳細">
           <TabbedShowLayout>
             <TabbedShowLayout.Tab label="求人情報">
                 <TextField source="company_name" label="会社名" />
@@ -113,9 +124,9 @@ export const AdvertisementShow = () => {
                   render={record => record.rikunavi_url ? <UrlField source="rikunavi_url" label="リクナビURL" target="_blank"/> : "未登録"}
                 />
                 <FunctionField
-                  source="international_student_recruitment"
-                  label="留学生採用"
-                  render={record => record.international_student_recruitment ? "あり" : "なし"}
+                  source="age_limit"
+                  label="年齢制限"
+                  render={record => record.age_limit + " 歳"}
                 />
                 <TextField source="job_recruiter_name" label="採用担当者名" />
                 <FunctionField source="recruiting_count" label="募集人数" render={record => record.recruiting_count + " 人"} />
@@ -133,8 +144,30 @@ export const AdvertisementShow = () => {
                 <RequirementListActions />
             </TabbedShowLayout.Tab>
             <TabbedShowLayout.Tab label="日付情報">
-                <DateField source="created_at" label="作成日" />
-                <DateField source="updated_at" label="更新日" />
+                <DateField
+                    source="created_at"
+                    label="作成日"
+                    showTime 
+                    locales="ja-JP" 
+                    options={{ 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    }}/>
+                <DateField
+                    source="updated_at"
+                    label="最終更新日"
+                    showTime 
+                    locales="ja-JP" 
+                    options={{ 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    }}/>
             </TabbedShowLayout.Tab>
             </TabbedShowLayout>
         </Show>

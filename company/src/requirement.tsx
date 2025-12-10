@@ -118,7 +118,7 @@ export const RequirementShow = () => {
     }, [refresh]);
 
     return (
-        <Show actions={<RequirementShowActions />}>
+        <Show actions={<RequirementShowActions />} title="募集要項詳細">
         <FullRecordGate>
         <TabbedShowLayout>
         <TabbedShowLayout.Tab label="概要">
@@ -192,8 +192,30 @@ export const RequirementShow = () => {
         </TabbedShowLayout.Tab>
 
         <TabbedShowLayout.Tab label="メタ情報">
-            <DateField source="created_at" label="作成日" emptyText="未登録" />
-            <DateField source="updated_at" label="更新日" emptyText="未登録" />
+            <DateField
+                    source="created_at"
+                    label="作成日"
+                    showTime 
+                    locales="ja-JP" 
+                    options={{ 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    }}/>
+            <DateField
+                    source="updated_at"
+                    label="最終更新日"
+                    showTime 
+                    locales="ja-JP" 
+                    options={{ 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    }}/>
         </TabbedShowLayout.Tab>
         </TabbedShowLayout>
     </FullRecordGate>

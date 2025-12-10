@@ -26,7 +26,7 @@ export const Account = () => {
   };
 
   return (
-    <Create resource="account">
+    <Create resource="account" title="アカウントの新規作成">
       <SimpleForm onSubmit={handleSubmit}>
         <TextInput source="account_name" label="アカウント名" />
         <TextInput source="password" label="パスワード" type="password" />

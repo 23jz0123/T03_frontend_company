@@ -4,21 +4,109 @@ import { Create,
         NumberInput,
         ReferenceArrayInput,
         ReferenceInput,
-        AutocompleteArrayInput,
         required,
-        SelectInput,
-        SelectArrayInput,
         ArrayInput,
-        SimpleFormIterator
+        SimpleFormIterator,
+        CheckboxGroupInput,
+        RadioButtonGroupInput,
+        useInput,
+        useGetList
     } from "react-admin";
 import { useLocation } from "react-router-dom";
+import { Checkbox, FormControlLabel, FormGroup, Typography, Grid, FormControl, FormLabel, FormHelperText } from '@mui/material';
 
 const validateRequired = required('必須項目です');
+
+const GroupedPrefectureInput = ({source, choices = [], isLoading, label, helperText, validate}) => {
+    const {
+        field,
+        fieldState: {isTouched, error},
+        isRequired
+    } = useInput({source, validate});
+
+    if(isLoading) return null;
+    const selectedIds = field.value || [];
+
+    const handleToggle = (id) => {
+        if(selectedIds.includes(id)) {
+            field.onChange(selectedIds.filter(itemId => itemId !== id));
+        } else {
+            field.onChange([...selectedIds, id]);
+        }
+    };
+
+    const regions = [
+        { name: "北海道・東北", prefs: ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"] },
+        { name: "関東", prefs: ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"] },
+        { name: "中部", prefs: ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県"] },
+        { name: "近畿", prefs: ["三重県", "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"] },
+        { name: "中国・四国", prefs: ["鳥取県", "島根県", "岡山県", "広島県", "山口県", "徳島県", "香川県", "愛媛県", "高知県"] },
+        { name: "九州・沖縄", prefs: ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"] },
+    ];
+
+    const hasError = isTouched && !!error;
+
+    return (
+        <FormControl 
+            component="fieldset" 
+            style={{ width: '100%', marginTop: '16px', marginBottom: '8px' }}
+            error={hasError} // 2. エラー時に赤くする
+            required={isRequired} // 3. 必須マーク(*)を表示
+        >
+        <FormLabel component="legend" style={{ marginBottom: '8px' }}>{label}</FormLabel>
+        <div style={{ width: '100%' }}>
+            {regions.map((region) => {
+                // 現在の地域に該当する都道府県データを抽出
+                const regionPrefs = choices.filter(d => region.prefs.includes(d.prefecture));
+                
+                if (regionPrefs.length === 0) return null;
+
+                return (
+                    <div key={region.name} style={{ marginBottom: '16px' }}>
+                        <Typography variant="subtitle2" color="primary" style={{ borderBottom: '1px solid #ddd', marginBottom: '8px' }}>
+                            {region.name}
+                        </Typography>
+                        <FormGroup row>
+                            <Grid container spacing={1}>
+                                {regionPrefs.map(pref => (
+                                    <Grid item xs={6} sm={4} md={3} key={pref.id}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={selectedIds.includes(pref.id)}
+                                                    onChange={() => handleToggle(pref.id)}
+                                                    color="primary"
+                                                    size="small"
+                                                />
+                                            }
+                                            label={pref.prefecture}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </FormGroup>
+                    </div>
+                );
+            })}
+        </div>
+        <FormHelperText>
+            {hasError ? error.message : helperText}
+        </FormHelperText>
+        </FormControl>
+    );
+}
 
 export const RequirementCreate = () => {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const advertisementId = params.get("advertisement_id");
+    const { data: prefecturesData, isLoading: isLoadingPrefectures } = useGetList(
+        'prefectures', 
+        { 
+            pagination: { page: 1, perPage: 100 }, // 全件取得するため多めに設定
+            sort: { field: 'id', order: 'ASC' } 
+        }
+    );
     const redirect = (resource: string, id: string | number, data: any) => {
         const advId = data?.advertisement_id || advertisementId;
 
@@ -28,22 +116,34 @@ export const RequirementCreate = () => {
 
         return 'list';
     }
+
+    const defaultValues = {
+        advertisement_id: advertisementId,
+        various_allowances: [{ name: '', first_allowance: null, second_allowance: null, third_allowance: null, fourth_allowance: null }]
+    }
+
     return (
         <Create resource="requirements" title="募集要項の作成" redirect={redirect}>
-            <SimpleForm defaultValues={{ advertisement_id: advertisementId}}>
+            <SimpleForm defaultValues={defaultValues}>
                 <ReferenceInput source="job_category_id" reference="job_categories" label="職種">
-                    <SelectInput optionText="job_category_name" label="職種" validate={validateRequired} helperText="一つ選択してください"/>
+                    <RadioButtonGroupInput optionText="job_category_name" label="職種" validate={validateRequired} helperText="一つ選択してください"/>
                 </ReferenceInput>
 
-                <SelectInput source="employment_status" label="雇用形態" choices={[
+                <RadioButtonGroupInput source="employment_status" label="雇用形態" choices={[
                     { id: '正社員', name: '正社員' },
                     { id: '契約社員', name: '契約社員' },
                     { id: 'パート・アルバイト', name: 'パート・アルバイト' },
                     { id: '業務委託', name: '業務委託' },
                 ]} validate={validateRequired}  helperText="一つ選択してください"/>
-                <ReferenceArrayInput source="prefecture_id" reference="prefectures" label="勤務地 (都道府県)">
-                    <SelectArrayInput optionText="prefecture" label="勤務地 (都道府県)" validate={validateRequired} helperText="複数選択可" />
-                </ReferenceArrayInput>
+                
+                <GroupedPrefectureInput
+                    source="prefecture_id"
+                    choices={prefecturesData}
+                    isLoading={isLoadingPrefectures}
+                    validate={validateRequired}
+                    label="勤務地 (都道府県)"
+                    helperText="複数選択可"
+                    />
                 <NumberInput
                     source="recruiting_count"
                     label="募集人数"
@@ -63,7 +163,7 @@ export const RequirementCreate = () => {
                     helperText="内々定までの所要日数を入力してください"
                     validate={validateRequired} />
                 <ReferenceArrayInput source="submission_objects_id" reference="submission_objects" label="提出物">
-                    <SelectArrayInput optionText="submission_object_name" label="提出物" validate={validateRequired} helperText="複数選択可" />
+                    <CheckboxGroupInput optionText="submission_object_name" label="提出物" validate={validateRequired} helperText="複数選択可" />
                 </ReferenceArrayInput>
                 <NumberInput source="starting_salary_first" label="初任給 (1年卒)" placeholder="220000" helperText="半角英数字で入力してください　年次による差がない場合は入力なし" />
                 <NumberInput source="starting_salary_second" label="初任給 (2年卒)" validate={validateRequired} placeholder="220000" helperText="半角英数字で入力してください" />
@@ -93,12 +193,12 @@ export const RequirementCreate = () => {
                     placeholder="120"
                     helperText="年間休日数を半角数字で入力してください"
                     validate={validateRequired} />
-                <SelectInput source="employee_dormitory" label="社員寮" choices={[
+                <RadioButtonGroupInput source="employee_dormitory" label="社員寮" choices={[
                     { id: 'あり', name: 'あり' },
                     { id: 'なし', name: 'なし' },
                     { id: '不明', name: '不明' },
                 ]} validate={validateRequired} />
-                <SelectInput source="contract_housing" label="借上社宅" choices={[
+                <RadioButtonGroupInput source="contract_housing" label="借上社宅" choices={[
                     { id: 'あり', name: 'あり' },
                     { id: 'なし', name: 'なし' },
                     { id: '不明', name: '不明' },
@@ -109,7 +209,7 @@ export const RequirementCreate = () => {
                     placeholder="例：9:00～18:00"
                     helperText="勤務時間を入力してください"
                     validate={validateRequired} />
-                <SelectInput source="flex" label="フレックス" choices={[
+                <RadioButtonGroupInput source="flex" label="フレックス" choices={[
                     { id: 'あり', name: 'あり' },
                     { id: 'なし', name: 'なし' },
                     { id: '不明', name: '不明' },
@@ -124,7 +224,7 @@ export const RequirementCreate = () => {
                     </SimpleFormIterator>
                 </ArrayInput>
                 <ReferenceArrayInput source="welfare_benefits_id" reference="welfare_benefits" label="福利厚生">
-                    <SelectArrayInput optionText="welfare_benefit" label="福利厚生" helperText="複数選択可"/>
+                    <CheckboxGroupInput optionText="welfare_benefit" label="福利厚生" helperText="複数選択可"/>
                 </ReferenceArrayInput>
                 <TextInput source="note" label="備考" multiline helperText="ご自由に記入してください" />
             </SimpleForm>
