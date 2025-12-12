@@ -1,4 +1,4 @@
-import { Create, SimpleForm, TextInput, required, NumberInput, useRedirect, useNotify, useDataProvider, ReferenceArrayInput, AutocompleteArrayInput } from "react-admin";
+import { Create, SimpleForm, TextInput, required, NumberInput, useRedirect, useNotify, useDataProvider, ReferenceArrayInput, AutocompleteArrayInput, CheckboxGroupInput } from "react-admin";
 import { useLocation } from "react-router-dom";
 
 export const CompanyCreate = () => {
@@ -95,7 +95,7 @@ export const CompanyCreate = () => {
               helperText="半角数字で入力してください"
               validate={validateRequired}/>
           <ReferenceArrayInput source="industry_id" reference="industries" label="業種">
-              <AutocompleteArrayInput optionText="industry_name" label="業種" helperText="複数選択可"/>
+              <CheckboxGroupInput optionText="industry_name" label="業種" helperText="複数選択可"/>
           </ReferenceArrayInput>
           <TextInput
               source="introduction" 
