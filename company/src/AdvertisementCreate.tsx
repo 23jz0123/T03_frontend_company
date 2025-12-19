@@ -29,7 +29,12 @@ export const AdvertisementCreate = () => {
             placeholder="10"
             helperText="半角数字で入力してください"
             validate={validateRequired} />
-        <NumberInput source="age_limit" label="年齢制限"/>
+        <NumberInput
+            source="age_limit"
+            label="年齢制限"
+            placeholder="25"
+            helperText="半角数字で入力してください"
+            validate={validateRequired} />
         <NumberInput
             source="average_age"
             label="平均年齢"
