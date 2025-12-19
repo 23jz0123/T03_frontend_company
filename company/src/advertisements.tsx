@@ -103,6 +103,11 @@ export const AdvertisementShow = () => {
                 <TextField source="company_name" label="会社名" />
                 <TextField source="company_name_furigana" label="会社名(ふりがな)" />
                 <FunctionField source="year" label="対象年"  render={record => record.year + " 年"}/>
+                <FunctionField
+                  source="age_limit"
+                  label="年齢制限"
+                  render={record => record.age_limit + " 歳"}
+                />
                 <FunctionField source="average_age" label="平均年齢" render={record => record.average_age + " 歳"} />
                 <FunctionField source="average_continued_service" label="平均勤続年数" render={record => record.average_continued_service + " 年"} />
                 <FunctionField source="average_overtime" label="平均残業時間" render={record => record.average_overtime + " 時間"} />
@@ -122,11 +127,6 @@ export const AdvertisementShow = () => {
                   source="rikunavi_url"
                   label="リクナビURL"
                   render={record => record.rikunavi_url ? <UrlField source="rikunavi_url" label="リクナビURL" target="_blank"/> : "未登録"}
-                />
-                <FunctionField
-                  source="age_limit"
-                  label="年齢制限"
-                  render={record => record.age_limit + " 歳"}
                 />
                 <TextField source="job_recruiter_name" label="採用担当者名" />
                 <FunctionField source="recruiting_count" label="募集人数" render={record => record.recruiting_count + " 人"} />
