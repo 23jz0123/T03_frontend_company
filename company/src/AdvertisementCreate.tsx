@@ -31,7 +31,7 @@ export const AdvertisementCreate = () => {
             validate={validateRequired} />
         <NumberInput
             source="age_limit"
-            label="年齢制限"
+            label="年齢制限（歳以下）"
             placeholder="25"
             helperText="半角数字で入力してください"
             validate={validateRequired} />

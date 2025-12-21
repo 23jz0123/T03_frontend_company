@@ -3,17 +3,24 @@ import {
     SimpleForm,
     TextInput,
     NumberInput,
-    SelectInput,
     required,
     ReferenceArrayInput,
-    CheckboxGroupInput
+    CheckboxGroupInput,
+    TopToolbar,
+    ShowButton,
 } from "react-admin";
 
 const validateRequired = required('必須項目です');
 
+const EditActions = () => (
+    <TopToolbar sx={{ justifyContent: "space-between" }}>
+        <ShowButton label="キャンセル " icon={false} />
+    </TopToolbar>
+);
+
 export const AdvertisementEdit = () => {
     return (
-        <Edit title="求人票編集">
+        <Edit title="求人票編集" actions={<EditActions />}>
             <SimpleForm>
                 <NumberInput 
                             source="year"
@@ -35,7 +42,7 @@ export const AdvertisementEdit = () => {
                             validate={validateRequired} />
                         <NumberInput 
                             source="age_limit"
-                            label="年齢制限"
+                            label="年齢制限（歳以下）"
                             placeholder="25"
                             helperText="半角数字で入力してください"
                             validate={validateRequired} />

@@ -836,6 +836,49 @@ const customDataProvider: DataProvider = {
         throw error;
       }
     }
+
+    if (resource === "requirements") {
+      const { id, previousData } = params as any;
+      if (!id) throw new Error("ID is required for delete operation");
+
+      const advId =
+        previousData?.advertisement_id ?? sessionStorage.getItem(`reqAdv:${id}`);
+      let companyId =
+        sessionStorage.getItem(`reqCompany:${id}`) ||
+        (advId ? sessionStorage.getItem(`advCompany:${advId}`) : null) ||
+        authId;
+
+      if (!advId) {
+        throw new Error(
+          "参照情報が不足しています。求人票から募集要項を開いてください。"
+        );
+      }
+
+      const url = `/api/companies/${companyId}/advertisements/${advId}/requirements/${id}`;
+
+      try {
+        const response = await fetch(url, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`DELETE Error (${resource}):`, errorText);
+          throw new Error(
+            `削除に失敗しました: ${response.status} ${response.statusText}`
+          );
+        }
+
+        return { data: { id } };
+      } catch (error) {
+        console.error("Delete Request error:", error);
+        throw error;
+      }
+    }
     throw new Error(`リソース ${resource} の削除はサポートされていません。`);
   },
 };
