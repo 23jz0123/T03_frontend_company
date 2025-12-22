@@ -24,7 +24,7 @@ export const AdvertisementsList = () => {
                         hour: '2-digit', 
                         minute: '2-digit' 
                     }}/>
-                <TextField source="year" label="年度" />
+                <TextField source="year" label="対象年（卒）" />
                 <TextField source="pending" label="公開状態" />
             </Datagrid>
         </List>
