@@ -1,4 +1,4 @@
-import { Show, TabbedShowLayout, TextField, DateField, NumberField, FunctionField, useShowContext, useRefresh, SingleFieldList, Datagrid, ArrayField, useRecordContext, RecordContextProvider, TopToolbar, EditButton, Button } from "react-admin";
+import { Show, TabbedShowLayout, TextField, DateField, NumberField, FunctionField, useShowContext, useRefresh, SingleFieldList, Datagrid, ArrayField, useRecordContext, RecordContextProvider, TopToolbar, EditButton, Button, DeleteButton, useRedirect } from "react-admin";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect } from "react";
@@ -64,6 +64,7 @@ const SalaryDatagridSection: React.FC = () => {
 
 const RequirementShowActions = () => {
     const record = useRecordContext();
+    const redirect = useRedirect();
     const { id } = useParams();
     if (!record || !record.advertisement_id) {
         console.log("no record or no advertisement_id", record);
@@ -90,7 +91,22 @@ const RequirementShowActions = () => {
                     />
                 )}
             </Box>
-            <EditButton label="編集"/>
+            <Box>
+                <EditButton label="編集"/>
+                <DeleteButton
+                    label="削除"
+                    mutationMode="pessimistic"
+                    mutationOptions={{
+                        onSuccess: () => {
+                            if (advertisementId) {
+                                redirect("show", "advertisements", advertisementId);
+                            } else {
+                                redirect("list", "advertisements");
+                            }
+                        },
+                    }}
+                />
+            </Box>
         </TopToolbar>
     )
 }

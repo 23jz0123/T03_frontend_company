@@ -4,16 +4,30 @@ import { Show, SimpleShowLayout, TextField, NumberField, BooleanField, ArrayFiel
         CreateButton,
         EditButton,
         DeleteButton,
-        TabbedShowLayout
+        TabbedShowLayout,
+        Button
       } from "react-admin";
-import { Chip, Button, Box, Typography } from "@mui/material";
+import { Chip, Box, Typography } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const AdvertisementShowActions = () => (
-  <TopToolbar>
-    <EditButton label="編集"/>
-    <DeleteButton label="削除" />
-  </TopToolbar>
-);
+const AdvertisementShowActions = () => {
+  const redirect = useRedirect();
+  return (
+    <TopToolbar sx={{ justifyContent: "space-between" }}>
+      <Box>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          label="一覧へ戻る"
+          onClick={() => redirect("list", "advertisements")}
+        />
+      </Box>
+      <Box>
+        <EditButton label="求人票編集" />
+        <DeleteButton label="求人票削除" />
+      </Box>
+    </TopToolbar>
+  );
+};
 
 const RequirementDetailButton: React.FC<{ companyId?: string | number; advertisementId?: string | number }> = ({ companyId, advertisementId }) => {
   const row = useRecordContext<any>();
@@ -106,7 +120,7 @@ export const AdvertisementShow = () => {
                 <FunctionField
                   source="age_limit"
                   label="年齢制限"
-                  render={record => record.age_limit + " 歳"}
+                  render={record => record.age_limit + " 歳以下"}
                 />
                 <FunctionField source="average_age" label="平均年齢" render={record => record.average_age + " 歳"} />
                 <FunctionField source="average_continued_service" label="平均勤続年数" render={record => record.average_continued_service + " 年"} />
