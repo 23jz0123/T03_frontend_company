@@ -116,7 +116,7 @@ export const AdvertisementShow = () => {
             <TabbedShowLayout.Tab label="求人情報">
                 <TextField source="company_name" label="会社名" />
                 <TextField source="company_name_furigana" label="会社名(ふりがな)" />
-                <FunctionField source="year" label="対象年"  render={record => record.year + " 年"}/>
+                <FunctionField source="year" label="対象年（卒）"  render={record => record.year + " 年"}/>
                 <FunctionField
                   source="age_limit"
                   label="年齢制限"
