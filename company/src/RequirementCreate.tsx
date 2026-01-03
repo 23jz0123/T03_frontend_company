@@ -123,7 +123,7 @@ export const RequirementCreate = () => {
     }
 
     return (
-        <Create resource="requirements" title="募集要項の作成" redirect={redirect}>
+        <Create resource="requirements" title="募集要項の作成" redirect="show">
             <SimpleForm defaultValues={defaultValues}>
                 <ReferenceInput source="job_category_id" reference="job_categories" label="職種">
                     <RadioButtonGroupInput optionText="job_category_name" label="職種" validate={validateRequired} helperText="一つ選択してください"/>

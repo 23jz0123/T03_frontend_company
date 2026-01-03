@@ -34,6 +34,21 @@ const toStringSafe = (val: any): string => {
   return String(val);
 };
 
+const normalizeNumberString = (val: string): string => {
+  // e.g. "10,000" or full-width digits "１００００"
+  return val
+    .replace(/,/g, "")
+    .replace(/[０-９]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0))
+    .trim();
+};
+
+const toOptionalNumber = (val: any): number | null => {
+  if (val === null || val === undefined || val === "") return null;
+  const raw = typeof val === "string" ? normalizeNumberString(val) : val;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : null;
+};
+
 const customAuthProvider = {
   async login({ username, password }) {
     const request = new Request("api/auth/company/login", {
@@ -600,60 +615,33 @@ const customDataProvider: DataProvider = {
 
       url = `/api/companies/${authId}/advertisements/${advId}/requirements`;
 
-      const processedAllowances: any[] = [];
-      if (Array.isArray(params.data.various_allowances)) {
-        params.data.various_allowances.forEach((item: any) => {
-          const name = toStringSafe(item.name);
-          // first_allowance -> grade 1
-          if (
-            item.first_allowance !== undefined &&
-            item.first_allowance !== null &&
-            item.first_allowance !== ""
-          ) {
-            processedAllowances.push({
-              name: name,
-              allowance: Number(item.first_allowance),
-              grade: 1,
-            });
-          }
-          // second_allowance -> grade 2
-          if (
-            item.second_allowance !== undefined &&
-            item.second_allowance !== null &&
-            item.second_allowance !== ""
-          ) {
-            processedAllowances.push({
-              name: name,
-              allowance: Number(item.second_allowance),
-              grade: 2,
-            });
-          }
-          // third_allowance -> grade 3
-          if (
-            item.third_allowance !== undefined &&
-            item.third_allowance !== null &&
-            item.third_allowance !== ""
-          ) {
-            processedAllowances.push({
-              name: name,
-              allowance: Number(item.third_allowance),
-              grade: 3,
-            });
-          }
-          // fourth_allowance -> grade 4
-          if (
-            item.fourth_allowance !== undefined &&
-            item.fourth_allowance !== null &&
-            item.fourth_allowance !== ""
-          ) {
-            processedAllowances.push({
-              name: name,
-              allowance: Number(item.fourth_allowance),
-              grade: 4,
-            });
-          }
-        });
-      }
+      const processedAllowances = Array.isArray(params.data.various_allowances)
+        ? params.data.various_allowances
+            .map((item: any) => {
+              const name = toStringSafe(item.name).trim();
+              const first_allowance = toOptionalNumber(item.first_allowance);
+              const second_allowance = toOptionalNumber(item.second_allowance);
+              const third_allowance = toOptionalNumber(item.third_allowance);
+              const fourth_allowance = toOptionalNumber(item.fourth_allowance);
+
+              return {
+                name,
+                first_allowance,
+                second_allowance,
+                third_allowance,
+                fourth_allowance,
+              };
+            })
+            .filter((row: any) => {
+              return (
+                row.name !== "" ||
+                row.first_allowance !== null ||
+                row.second_allowance !== null ||
+                row.third_allowance !== null ||
+                row.fourth_allowance !== null
+              );
+            })
+        : [];
 
       dataToSubmit = {
         advertisement_id: Number(advId),
@@ -697,7 +685,7 @@ const customDataProvider: DataProvider = {
           ? params.data.welfare_benefits_id.map(Number)
           : [],
 
-        // 変換した諸手当データをここでセット
+        // 1行=1手当（first〜fourthを同一オブジェクトで送る）
         various_allowances: processedAllowances,
         updated_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
@@ -725,6 +713,14 @@ const customDataProvider: DataProvider = {
       }
 
       const responseData = await response.json();
+
+      if(resource === "requirements" && responseData?.id != null) {
+        const advIdForReq = (dataToSubmit as any)?.advertisement_id;
+        if(advIdForReq != null) {
+          sessionStorage.setItem(`reqAdv:${responseData.id}`, String(advIdForReq));
+        }
+        sessionStorage.setItem(`reqCompany:${responseData.id}`, String(authId));
+      }
       return { data: { ...responseData, id: responseData.id } };
     } catch (error) {
       console.error("Create Request error:", error);
@@ -763,9 +759,41 @@ const customDataProvider: DataProvider = {
       const advId = data.advertisement_id;
       if (!advId) throw new Error("advertisement_idが見つかりません");
 
+      sessionStorage.setItem(`reqAdv:${id}`, String(advId));
+      sessionStorage.setItem(`reqCompany:${id}`, String(authId));
       url = `/api/companies/${authId}/advertisements/${advId}/requirements/${id}`;
+
+      const processedAllowances = Array.isArray(data.various_allowances)
+        ? data.various_allowances
+            .map((item: any) => {
+              const name = toStringSafe(item.name).trim();
+              const first_allowance = toOptionalNumber(item.first_allowance);
+              const second_allowance = toOptionalNumber(item.second_allowance);
+              const third_allowance = toOptionalNumber(item.third_allowance);
+              const fourth_allowance = toOptionalNumber(item.fourth_allowance);
+
+              return {
+                name,
+                first_allowance,
+                second_allowance,
+                third_allowance,
+                fourth_allowance,
+              };
+            })
+            .filter((row: any) => {
+              return (
+                row.name !== "" ||
+                row.first_allowance !== null ||
+                row.second_allowance !== null ||
+                row.third_allowance !== null ||
+                row.fourth_allowance !== null
+              );
+            })
+        : [];
+
       dataToSubmit = {
         ...data,
+        various_allowances: processedAllowances,
         updated_at: new Date().toISOString(),
       };
     } else {
