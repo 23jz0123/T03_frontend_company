@@ -470,6 +470,7 @@ const customDataProvider: DataProvider = {
     };
 
     const paramName = selectionParamMap[resource];
+    console.log(`getMany paramName for ${resource}:`, paramName);
     let url = `/api/list/${resource}`;
 
     if (paramName) {
