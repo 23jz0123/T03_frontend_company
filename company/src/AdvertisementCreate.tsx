@@ -1,7 +1,60 @@
-import { Create, SimpleForm, TextInput, NumberInput, required, CheckboxGroupInput, useNotify, useDataProvider, ReferenceArrayInput, AutocompleteArrayInput } from "react-admin";
-import { useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import {
+    Create,
+    SimpleForm,
+    TextInput,
+    NumberInput,
+    required,
+    CheckboxGroupInput,
+    ReferenceArrayInput,
+    useDataProvider,
+    useNotify,
+} from "react-admin";
+import { useFormContext } from "react-hook-form";
 
-const validateRequired = required('必須項目です');
+const validateRequired = required("必須項目です");
+
+const PrefillFromLatestAdvertisement = () => {
+    const dataProvider = useDataProvider();
+    const notify = useNotify();
+    const { reset, getValues } = useFormContext();
+    const done = useRef(false);
+
+    useEffect(() => {
+        const run = async () => {
+            if (done.current) return;
+
+            const latestId = sessionStorage.getItem("latestAdvertisementId");
+            if (!latestId) return; // Listを経由していない場合は何もしない
+
+            try {
+                const res = await dataProvider.getOne("advertisements", { id: latestId });
+                const base = res?.data;
+                if (!base) return;
+
+                // 例: 年だけは「前年コピーして +1」にしたい場合
+                const nextYear =
+                    base.year !== null && base.year !== undefined && base.year !== ""
+                        ? Number(base.year) + 1
+                        : new Date().getFullYear();
+
+                reset({
+                    ...getValues(),
+                    ...base,
+                    year: nextYear,
+                });
+
+                done.current = true;
+            } catch {
+                notify("直近データの取得に失敗しました", { type: "warning" });
+            }
+        };
+
+        run();
+    }, [dataProvider, notify, reset, getValues]);
+
+    return null;
+};
 
 export const AdvertisementCreate = () => {
     const redirect = (resource: string, id: string | number, data: any) => {
@@ -11,6 +64,7 @@ export const AdvertisementCreate = () => {
     return (
     <Create redirect={redirect} resource="advertisements" title="求人票の新規作成">
         <SimpleForm>
+        <PrefillFromLatestAdvertisement />
         <NumberInput 
             source="year"
             label="対象年（卒）"
