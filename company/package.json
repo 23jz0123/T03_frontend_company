@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "ra-i18n-polyglot": "^5.13.4",
+    "ra-language-japanese": "^0.1.1",
     "react": "^19.1.1",
     "react-admin": "^5.12.1",
     "react-dom": "^19.1.1"
