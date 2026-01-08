@@ -17,6 +17,7 @@ import {
   Button,
   DeleteButton,
   useRedirect,
+  useNotify,
 } from "react-admin";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -87,6 +88,7 @@ const SalaryDatagridSection: React.FC = () => {
 const RequirementShowActions = () => {
   const record = useRecordContext();
   const redirect = useRedirect();
+  const notify = useNotify();
   const { id } = useParams();
   if (!record || !record.advertisement_id) {
     console.log("no record or no advertisement_id", record);
@@ -132,7 +134,7 @@ const RequirementShowActions = () => {
           mutationOptions={{
             onSuccess: () => {
               notify("募集要項を削除しました", { type: "info" });
-              redirect("show", "advertisements", advertisementId!);
+              redirect(`/advertisements/${advertisementId}/show/1`);
             },
           }}
         />

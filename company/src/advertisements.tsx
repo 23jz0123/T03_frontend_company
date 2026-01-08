@@ -19,12 +19,14 @@ import {
   DeleteButton,
   TabbedShowLayout,
   Button,
+  useNotify,
 } from "react-admin";
 import { Chip, Box, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const AdvertisementShowActions = () => {
   const redirect = useRedirect();
+  const notify = useNotify();
   return (
     <TopToolbar sx={{ justifyContent: "space-between" }}>
       <Box>
