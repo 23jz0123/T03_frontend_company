@@ -9,6 +9,8 @@ import {
   useLogin,
   useNotify,
 } from "react-admin";
+import polyglotI18nProvider from "ra-i18n-polyglot";
+import japaneseMessages from "ra-language-japanese";
 import { Link, useNavigate } from "react-router-dom";
 import { ProductShow } from "./products";
 import { useState } from "react";
@@ -22,6 +24,28 @@ import { ProductEdit } from "./productEdit";
 import { RequirementEdit } from "./RequirementEdit";
 
 const logDP = (...args: any[]) => console.debug("[DP]", ...args);
+
+const messages = {
+  ...japaneseMessages,
+  ra: {
+    ...(japaneseMessages as any).ra,
+    action: {
+      ...((japaneseMessages as any).ra.action || {}),
+      confirm: "確認",
+    },
+    configurable: {
+      ...((japaneseMessages as any).ra?.configurable || {}),
+      customize: "カスタマイズ",
+    },
+    // 追加: sort の不足キーを補完
+    sort: {
+      ...((japaneseMessages as any).ra?.sort || {}),
+      ASC: "昇順",
+      DESC: "降順",
+    },
+  },
+};
+const customI18nProvider = polyglotI18nProvider(() => messages, "ja");
 
 const toNumber = (val: any): number => {
   if (val === null || val === undefined || val === "") return 0;
@@ -715,10 +739,13 @@ const customDataProvider: DataProvider = {
 
       const responseData = await response.json();
 
-      if(resource === "requirements" && responseData?.id != null) {
+      if (resource === "requirements" && responseData?.id != null) {
         const advIdForReq = (dataToSubmit as any)?.advertisement_id;
-        if(advIdForReq != null) {
-          sessionStorage.setItem(`reqAdv:${responseData.id}`, String(advIdForReq));
+        if (advIdForReq != null) {
+          sessionStorage.setItem(
+            `reqAdv:${responseData.id}`,
+            String(advIdForReq)
+          );
         }
         sessionStorage.setItem(`reqCompany:${responseData.id}`, String(authId));
       }
@@ -871,7 +898,8 @@ const customDataProvider: DataProvider = {
       if (!id) throw new Error("ID is required for delete operation");
 
       const advId =
-        previousData?.advertisement_id ?? sessionStorage.getItem(`reqAdv:${id}`);
+        previousData?.advertisement_id ??
+        sessionStorage.getItem(`reqAdv:${id}`);
       let companyId =
         sessionStorage.getItem(`reqCompany:${id}`) ||
         (advId ? sessionStorage.getItem(`advCompany:${advId}`) : null) ||
@@ -917,6 +945,7 @@ const App = () => (
     dataProvider={customDataProvider}
     authProvider={customAuthProvider}
     loginPage={CustomLoginPage}
+    i18nProvider={customI18nProvider}
   >
     <Resource
       name="products"
