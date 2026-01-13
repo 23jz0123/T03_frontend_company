@@ -118,6 +118,7 @@ const customAuthProvider = {
   },
   async logout() {
     sessionStorage.removeItem("auth_id");
+    sessionStorage.removeItem("latestAdvertisementId");
   },
   async getIdentity() {
     const id = sessionStorage.getItem("auth_id");
