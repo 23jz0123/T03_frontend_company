@@ -158,7 +158,7 @@ const CustomLoginPage = () => {
         navigate("/", { replace: true });
       }
     } catch (error) {
-      notify("ログインに失敗しました", { type: "error" });
+      notify("ユーザー名かパスワードが間違っています", { type: "error" });
     } finally {
       setLoading(false);
     }
