@@ -1,9 +1,7 @@
 import {
   Show,
-  SimpleShowLayout,
   TextField,
   NumberField,
-  BooleanField,
   ArrayField,
   FunctionField,
   DateField,
@@ -24,6 +22,27 @@ import {
 import { Chip, Box, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
+import type { RaRecord, Identifier } from "react-admin";
+
+interface Advertisement extends RaRecord {
+  company_id: Identifier;
+  year: number;
+  age_limit: number;
+  average_age: number;
+  average_continued_service: number;
+  average_overtime: number;
+  average_paid_vacation: number;
+  recruiting_count: number;
+  recruitment: number;
+  homepage_url?: string;
+  mynavi_url?: string;
+  rikunavi_url?: string;
+  briefing_info?: string;
+  company_name: string;
+  company_name_furigana: string;
+  tags?: string[];
+}
+
 const AdvertisementShowActions = () => {
   const redirect = useRedirect();
   const notify = useNotify();
@@ -43,8 +62,6 @@ const AdvertisementShowActions = () => {
           mutationMode="pessimistic"
           confirmTitle="求人票を削除しますか？"
           confirmContent="この操作は取り消せません。"
-          confirmOk="削除"
-          confirmCancel="キャンセル"
           mutationOptions={{
             onSuccess: () => {
               notify("求人票を削除しました", { type: "info" });
@@ -55,26 +72,6 @@ const AdvertisementShowActions = () => {
       </Box>
     </TopToolbar>
   );
-};
-
-const RequirementDetailButton: React.FC<{
-  companyId?: string | number;
-  advertisementId?: string | number;
-}> = ({ companyId, advertisementId }) => {
-  const row = useRecordContext<any>();
-  const redirect = useRedirect();
-
-  if (!row?.id || !companyId || !advertisementId) return null;
-
-  const handleClick = () => {
-    // 親IDをキャッシュ（getOne 用）
-    sessionStorage.setItem(`reqAdv:${row.id}`, String(advertisementId));
-    sessionStorage.setItem(`reqCompany:${row.id}`, String(companyId));
-    sessionStorage.setItem(`advCompany:${advertisementId}`, String(companyId));
-    redirect("show", "requirements", row.id);
-  };
-
-  return <Button onClick={handleClick}></Button>;
 };
 
 const RequirementListActions = () => {
@@ -102,10 +99,6 @@ const EmptyRequirement = () => (
 
 // 親（求人票）レコードから company_id, id を取得して列を組み立て
 const RequirementColumns = () => {
-  const parent = useRecordContext<any>(); // 求人票レコード
-  const companyId = parent?.company_id;
-  const advertisementId = parent?.id;
-
   return (
     <Datagrid bulkActionButtons={false} empty={<EmptyRequirement />}>
       <TextField source="employment_status" label="雇用形態" />
@@ -113,7 +106,7 @@ const RequirementColumns = () => {
 
       <FunctionField
         label="勤務地"
-        render={(r: any) =>
+        render={(r) =>
           Array.isArray(r?.location) && r.location.length
             ? r.location.join("、")
             : "未登録"
@@ -152,38 +145,44 @@ export const AdvertisementShow = () => {
           <FunctionField
             source="year"
             label="対象年（卒）"
-            render={(record) => record.year + " 年"}
+            render={(record: Advertisement) => record.year + " 年"}
           />
           <FunctionField
             source="age_limit"
             label="年齢制限"
-            render={(record) => record.age_limit + " 歳以下"}
+            render={(record: Advertisement) => record.age_limit + " 歳以下"}
           />
           <FunctionField
             source="average_age"
             label="平均年齢"
-            render={(record) => record.average_age + " 歳"}
+            render={(record: Advertisement) => record.average_age + " 歳"}
           />
           <FunctionField
             source="average_continued_service"
             label="平均勤続年数"
-            render={(record) => record.average_continued_service + " 年"}
+            render={(record: Advertisement) =>
+              record.average_continued_service + " 年"
+            }
           />
           <FunctionField
             source="average_overtime"
             label="平均残業時間"
-            render={(record) => record.average_overtime + " 時間"}
+            render={(record: Advertisement) =>
+              record.average_overtime + " 時間"
+            }
           />
           <FunctionField
             source="average_paid_vacation"
             label="平均有給休暇日数"
-            render={(record) => record.average_paid_vacation + " 日"}
+            render={(record: Advertisement) =>
+              record.average_paid_vacation + " 日"
+            }
           />
           <TextField source="briefing_info" label="説明会情報" />
           <FunctionField
             source="homepage_url"
             label="ホームページURL"
-            render={(record) =>
+            render={(record: Advertisement) =>
               record.homepage_url ? (
                 <UrlField
                   source="homepage_url"
@@ -198,7 +197,7 @@ export const AdvertisementShow = () => {
           <FunctionField
             source="mynavi_url"
             label="マイナビURL"
-            render={(record) =>
+            render={(record: Advertisement) =>
               record.mynavi_url ? (
                 <UrlField
                   source="mynavi_url"
@@ -213,7 +212,7 @@ export const AdvertisementShow = () => {
           <FunctionField
             source="rikunavi_url"
             label="リクナビURL"
-            render={(record) =>
+            render={(record: Advertisement) =>
               record.rikunavi_url ? (
                 <UrlField
                   source="rikunavi_url"
@@ -229,17 +228,17 @@ export const AdvertisementShow = () => {
           <FunctionField
             source="recruiting_count"
             label="募集人数"
-            render={(record) => record.recruiting_count + " 人"}
+            render={(record: Advertisement) => record.recruiting_count + " 人"}
           />
           <FunctionField
             source="recruitment"
             label="卒業生採用数"
-            render={(record) => record.recruitment + " 人"}
+            render={(record: Advertisement) => record.recruitment + " 人"}
           />
           <ArrayField source="tags" label="タグ">
             <SingleFieldList linkType={false}>
               <FunctionField
-                render={(tag: any) => <Chip label={String(tag)} size="small" />}
+                render={(tag) => <Chip label={String(tag)} size="small" />}
               />
             </SingleFieldList>
           </ArrayField>

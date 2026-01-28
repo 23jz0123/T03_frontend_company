@@ -27,13 +27,13 @@ import { Link, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const DEBUG = true;
-const dlog = (...args: any[]) =>
+const dlog = (...args: unknown[]) =>
   DEBUG && console.debug("[RequirementShow]", ...args);
 
 const FullRecordGate: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { record, isFetching } = useShowContext<any>();
+  const { record, isFetching } = useShowContext();
 
   useEffect(() => {
     dlog("record changed", { record, isFetching, _full: record?._full });
@@ -56,7 +56,7 @@ const FullRecordGate: React.FC<{ children: React.ReactNode }> = ({
 };
 
 const SalaryDatagridSection: React.FC = () => {
-  const record = useRecordContext<any>();
+  const record = useRecordContext();
   if (!record) return null;
 
   const rows = [
@@ -105,7 +105,7 @@ const RequirementShowActions = () => {
       " advID:",
       advertisementId,
       " record:",
-      record
+      record,
     );
   }, [record, id, advertisementId]);
   if (!advertisementId) {
@@ -154,15 +154,19 @@ export const RequirementShow = () => {
   // bfcache 復元時は必ず再取得＋ログ
   useEffect(() => {
     const onPageShow = (e: PageTransitionEvent) => {
-      const persisted = (e as any).persisted;
+      const persisted = e.persisted;
       dlog("pageshow", { persisted });
       if (persisted) {
         dlog("pageshow persisted -> refresh()");
         refresh();
       }
     };
-    window.addEventListener("pageshow", onPageShow as any);
-    return () => window.removeEventListener("pageshow", onPageShow as any);
+    window.addEventListener("pageshow", onPageShow as unknown as EventListener);
+    return () =>
+      window.removeEventListener(
+        "pageshow",
+        onPageShow as unknown as EventListener,
+      );
   }, [refresh]);
 
   return (
@@ -182,7 +186,7 @@ export const RequirementShow = () => {
             />
             <FunctionField
               label="勤務地（都道府県）"
-              render={(r: any) =>
+              render={(r) =>
                 Array.isArray(r?.prefectures) && r.prefectures.length
                   ? r.prefectures.join("、")
                   : "未登録"
@@ -196,7 +200,7 @@ export const RequirementShow = () => {
             />
             <FunctionField
               label="年間休日"
-              render={(r: any) =>
+              render={(r) =>
                 typeof r?.holiday_leave === "number"
                   ? `${r.holiday_leave} 日`
                   : "未登録"
@@ -204,7 +208,7 @@ export const RequirementShow = () => {
             />
             <FunctionField
               label="賞与"
-              render={(r: any) => {
+              render={(r) => {
                 const v = r?.bonus;
                 if (typeof v !== "number") return "未登録";
                 if (v === 0) return "なし";
@@ -214,7 +218,7 @@ export const RequirementShow = () => {
             />
             <FunctionField
               label="昇給"
-              render={(r: any) => {
+              render={(r) => {
                 const v = r?.salary_increase;
                 if (typeof v !== "number") return "未登録";
                 if (v === 0) return "なし";
@@ -283,7 +287,9 @@ export const RequirementShow = () => {
             <ArrayField source="welfare_benefits" label="福利厚生">
               <SingleFieldList linkType={false}>
                 <FunctionField
-                  render={(v: any) => <Chip size="small" label={String(v)} />}
+                  render={(v: unknown) => (
+                    <Chip size="small" label={String(v)} />
+                  )}
                 />
               </SingleFieldList>
             </ArrayField>
@@ -298,7 +304,7 @@ export const RequirementShow = () => {
             <ArrayField source="submission_objects" label="提出物">
               <SingleFieldList linkType={false}>
                 <FunctionField
-                  render={(v: any) => <Chip size="small" label={String(v)} />}
+                  render={(v) => <Chip size="small" label={String(v)} />}
                 />
               </SingleFieldList>
             </ArrayField>
