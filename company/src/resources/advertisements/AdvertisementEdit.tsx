@@ -8,7 +8,6 @@ import {
   CheckboxGroupInput,
   TopToolbar,
   ShowButton,
-  BooleanInput,
 } from "react-admin";
 
 const validateRequired = required("必須項目です");
@@ -24,7 +23,7 @@ export const AdvertisementEdit = () => {
     <Edit
       title="求人票編集"
       actions={<EditActions />}
-      transform={(data: any) => ({
+      transform={(data: Record<string, unknown>) => ({
         ...data,
         // pending が null / undefined のときだけ false にする
         pending: data?.pending == null ? false : Boolean(data.pending),

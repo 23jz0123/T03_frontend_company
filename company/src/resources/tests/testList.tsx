@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@mui/material";
-import { List, Datagrid, TextField, SimpleList, EditButton } from "react-admin";
+import { List, Datagrid, TextField, SimpleList } from "react-admin";
 
 export const UserList = () => {
   const isSmall = useMediaQuery((theme) => theme.breakpoints.down("sm")); // ロジックはJSXの外で記述
@@ -12,7 +12,7 @@ export const UserList = () => {
           secondaryText={(record) => record.company_name}
         />
       ) : (
-        <Datagrid rowClick="show"> 
+        <Datagrid rowClick="show">
           <TextField source="company_name" />
         </Datagrid>
       )}
