@@ -164,3 +164,9 @@ body {
     text-decoration: underline;
   }
   
+  .login-logo {
+    width: 130px;   /* ←少し大きく（必要なら 160px などに） */
+    height: auto;
+    display: block;
+    margin: 0 auto 12px;
+  }
