@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useLogin, useNotify } from "react-admin";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "./t03.svg";
+
+
 
 export const CustomLoginPage = () => {
   const login = useLogin();
@@ -33,9 +36,7 @@ export const CustomLoginPage = () => {
     <div className="login-page">
       <div className="login-container">
         <div className="login-card">
-          <img src="/path/to/logo.png" alt="Logo" className="login-logo" />
-
-          <h1 className="login-title">Bloom Career</h1>
+        <img src={logo} alt="Logo" className="login-logo" />
           <p className="login-subtitle">アカウントにサインインしてください。</p>
 
           <form onSubmit={handleSubmit} className="login-form">
