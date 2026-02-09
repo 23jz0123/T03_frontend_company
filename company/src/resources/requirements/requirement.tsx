@@ -18,6 +18,7 @@ import {
   DeleteButton,
   useRedirect,
   useNotify,
+  RichTextField,
 } from "react-admin";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -296,10 +297,15 @@ export const RequirementShow = () => {
           </TabbedShowLayout.Tab>
 
           <TabbedShowLayout.Tab label="選考・提出物">
-            <TextField
+            <RichTextField
               source="recruitment_flow"
               label="選考フロー"
               emptyText="未登録"
+              sx={{
+                whiteSpace: "pre-wrap",
+                display: "block",
+                wordBreak: "break-word",
+              }}
             />
             <ArrayField source="submission_objects" label="提出物">
               <SingleFieldList linkType={false}>
@@ -311,10 +317,16 @@ export const RequirementShow = () => {
           </TabbedShowLayout.Tab>
 
           <TabbedShowLayout.Tab label="備考">
-            <TextField source="note" label="備考" />
+            <RichTextField source="note" label="備考"
+              sx={{
+                whiteSpace: "pre-wrap",
+                display: "block",
+                wordBreak: "break-word",
+              }}
+            />
           </TabbedShowLayout.Tab>
 
-          <TabbedShowLayout.Tab label="メタ情報">
+          <TabbedShowLayout.Tab label="日付情報">
             <DateField
               source="created_at"
               label="作成日"
