@@ -44,7 +44,13 @@ export const ProductShow = () => {
         <TextField source="company_name" label="会社名" />
         <TextField source="company_name_furigana" label="会社名(ふりがな)" />
         <TextField source="address" label="住所" />
-        <RichTextField source="business_detail" label="事業内容" />
+        <RichTextField source="business_detail" label="事業内容"
+          sx={{
+            whiteSpace: "pre-wrap",
+            display: "block",
+            wordBreak: "break-word",
+          }}
+        />
         <NumberField
           source="capital"
           label="資本金"
@@ -70,18 +76,36 @@ export const ProductShow = () => {
             />
           </SingleFieldList>
         </ArrayField>
-        <RichTextField source="introduction" label="会社紹介文" />
+        <RichTextField source="introduction" label="会社紹介文"
+          sx={{
+            whiteSpace: "pre-wrap",
+            display: "block",
+            wordBreak: "break-word",
+          }}
+        />
         <TextField source="office_location" label="事業所" />
         <TextField source="phone_number" label="電話番号" />
         <TextField source="postal_code" label="郵便番号" />
-        <RichTextField source="profile" label="プロフィール" />
+        <RichTextField source="profile" label="プロフィール"
+          sx={{
+            whiteSpace: "pre-wrap",
+            display: "block",
+            wordBreak: "break-word",
+          }}
+        />
         <TextField source="representative_name" label="採用担当者" />
         <NumberField
           source="sales"
           label="売上"
           options={{ style: "currency", currency: "JPY" }}
         />
-        <RichTextField source="service_achievement" label="主な事業実績" />
+        <RichTextField source="service_achievement" label="主な事業実績"
+          sx={{
+            whiteSpace: "pre-wrap",
+            display: "block",
+            wordBreak: "break-word",
+          }}
+        />
       </SimpleShowLayout>
     </Show>
   );

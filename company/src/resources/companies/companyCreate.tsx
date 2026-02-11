@@ -91,6 +91,7 @@ export const CompanyCreate = () => {
         <TextInput
           source="business_detail"
           label="事業内容"
+          multiline
           placeholder="例：ソフトウェア開発、ITコンサルティング"
           helperText="会社の主な事業内容を入力してください"
           validate={validateRequired}
@@ -137,6 +138,7 @@ export const CompanyCreate = () => {
         <TextInput
           source="introduction"
           label="会社紹介文"
+          multiline
           placeholder="例：私たち〇〇株式会社は、..."
           helperText="会社の紹介文を入力してください"
           validate={validateRequired}
@@ -144,6 +146,7 @@ export const CompanyCreate = () => {
         <TextInput
           source="office_location"
           label="事業所"
+          multiline
           placeholder="例：東京都新宿区、大阪府大阪市"
           helperText="事業所の所在地を入力してください"
           validate={validateRequired}
@@ -164,6 +167,7 @@ export const CompanyCreate = () => {
         <TextInput
           source="profile"
           label="プロフィール"
+          multiline
           placeholder="例：〇〇業界での豊富な経験を持つ企業です。"
           helperText="会社のプロフィールを入力してください"
           validate={validateRequired}
@@ -185,6 +189,7 @@ export const CompanyCreate = () => {
         <TextInput
           source="service_achievement"
           label="主な事業実績"
+          multiline
           placeholder="例：大手企業向けシステム開発"
           helperText="会社の主な事業実績を入力してください"
           validate={validateRequired}
